@@ -29,10 +29,13 @@ const SDL_Color GREEN_COLOR = {0, 128, 0};
 const SDL_Color DEFAULT_COLOR = BLACK_COLOR;
 
 enum GameState {
-    PLAYING = 0,
-    LOSE,
-    WIN, 
-    QUIT
+    LOGGING_IN = 0,
+    GAME_SCREEN,
+    PAUSE_MENU,
+    QUEST_MENU,
+    QUITTING
 };
+
+const bool debug = true;
 
 # endif
