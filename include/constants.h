@@ -33,9 +33,10 @@ enum GameState {
     GAME_SCREEN,
     PAUSE_MENU,
     QUEST_MENU,
+    CHANGING_FLOOR,
     QUITTING
 };
 
-const bool debug = true;
+const int MOVING_SPEED = 300;
 
 # endif

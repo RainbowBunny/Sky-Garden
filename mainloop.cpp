@@ -17,10 +17,10 @@ enum GameState {
 
 MainLoop::MainLoop(SDL_Renderer* &renderer, Gallery &gallery) {
     signInMenu = loadMenuFromFile("data/signin_menu.txt", renderer, gallery);
-    signInMenu.updateBothButton("Logging in", "Logging in");
+    signInMenu.updateBothButton("Sign In", "Sign In");
     signInMenu.updateBothButton("Sign Up", "Sign Up");
 
-    background = Background();
+    background = Background(gallery);
     gameState = LOGGING_IN;
 }
 
@@ -28,8 +28,13 @@ void MainLoop::renderGame(SDL_Renderer* &renderer, Gallery &gallery, int mouseX,
     // std::cout << "Mainloop rendering..." << std::endl;
     background.renderBackground(renderer, gallery);
     switch (gameState) {
+
         case LOGGING_IN: {
             signInMenu.renderMenu(renderer, gallery, mouseX, mouseY);
+            break;
+        }
+
+        default: {
             break;
         }
     }
@@ -42,6 +47,54 @@ void MainLoop::handleUserInput(SDL_Event e, SDL_Renderer* &renderer, Gallery &ga
             break;
         }
 
+        case SDL_MOUSEBUTTONDOWN: {
 
+            switch (gameState) {
+
+                case LOGGING_IN: {
+                    std::string pressedButton = signInMenu.getPressedButton(e.button.x, e.motion.y);
+                    
+                    if (pressedButton == "Sign In") {
+                        if (e.button.button == SDL_BUTTON_LEFT) {
+                            updateGameState(GAME_SCREEN);
+                        }
+                    }
+
+                    break;
+                }
+
+                default: {
+
+                } 
+
+            }
+
+        }
+
+        case SDL_KEYDOWN: {
+
+            switch (e.key.keysym.sym) {
+
+                case SDLK_UP: {
+                    background.moveUp();
+                    break;
+                }
+
+                case SDLK_DOWN: {
+                    background.moveDown();
+                    break;
+                }
+
+                default: {
+                    
+                }
+
+            }
+
+        }
+
+        default: {
+            break;
+        }
     }
 }

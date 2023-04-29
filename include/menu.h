@@ -65,10 +65,15 @@ class Background {
 private:
     int frame = 0;
     GameState currentState;
+    SDL_Rect srcRect, dstRect;
     std::vector <PictureID> backgroundID;
+    Gallery *gallery;
 public:
-    Background();
-    void setBackgroundState(GameState state) { currentState = state; frame = 0; }
+    Background() {}
+    Background(Gallery &gallery);
+    void setBackgroundState(GameState state);
+    void moveDown();
+    void moveUp();
     void renderBackground(SDL_Renderer* &renderer, Gallery &gallery);
 };
 

@@ -112,7 +112,7 @@ std::string Menu::getPressedButton(int mouseX, int mouseY) {
     return "none";
 }
 
-Background::Background() {
+Background::Background(Gallery &gallery) {
     /*
     enum GameState {
         LOGGING_IN = 0,
@@ -122,7 +122,12 @@ Background::Background() {
     };
     */
 
+    gallery = gallery;
     currentState = LOGGING_IN;
+    srcRect = {0, 0, 0, 0};
+    int tmp = 0;
+    SDL_QueryTexture(gallery.getFrame(MENU_BACKGROUND, tmp), nullptr, nullptr, &srcRect.w, &srcRect.h);
+    dstRect = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
 
     backgroundID.push_back(MENU_BACKGROUND);
     backgroundID.push_back(MENU_BACKGROUND);
@@ -131,11 +136,53 @@ Background::Background() {
 }
 
 void Background::renderBackground(SDL_Renderer* &renderer, Gallery &gallery) {
-    if (backgroundID[currentState] == NONE) {
+    if (backgroundID[currentState] == NONE or dstRect.w < 0) {
         return;
     }
-    SDL_RenderCopy(renderer, gallery.getFrame(backgroundID[currentState], frame), nullptr, nullptr);
+    SDL_RenderCopy(renderer, gallery.getFrame(backgroundID[currentState], frame), &srcRect, &dstRect);
     frame++;
+}
+
+void Background::setBackgroundState(GameState state) {
+    currentState = state;
+    frame = 0;
+
+    srcRect = {0, 0, 0, 0};
+    int tmp = 0;
+    SDL_QueryTexture(gallery->getFrame(backgroundID[state], tmp), nullptr, nullptr, &srcRect.w, &srcRect.h);
+    dstRect = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
+}
+
+void Background::moveDown() {
+    /*
+        Go to lower cloud level
+    */
+
+    int pictureHeight = srcRect.h, windowHeight = dstRect.h;
+
+    dstRect.y -= MOVING_SPEED;
+    dstRect.h += MOVING_SPEED;
+
+    srcRect.h += MOVING_SPEED * srcRect.h / windowHeight;
+
+    std::cout << dstRect.x << " " << dstRect.y << " " << dstRect.w << " " << dstRect.h << std::endl;
+    std::cout << srcRect.x << " " << srcRect.y << " " << srcRect.w << " " << srcRect.h << std::endl;
+}
+
+void Background::moveUp() {
+    /*
+        Go to higher cloud level
+    */
+
+    int pictureHeight = srcRect.h, windowHeight = dstRect.h;
+
+    dstRect.y += MOVING_SPEED;
+    dstRect.h -= MOVING_SPEED;
+
+    srcRect.h -= MOVING_SPEED * srcRect.h / windowHeight;
+
+    std::cout << dstRect.x << " " << dstRect.y << " " << dstRect.w << " " << dstRect.h << std::endl;
+    std::cout << srcRect.x << " " << srcRect.y << " " << srcRect.w << " " << srcRect.h << std::endl;
 }
 
 void Textbox::renderTextBox(SDL_Renderer* &renderer, Gallery &gallery) {
