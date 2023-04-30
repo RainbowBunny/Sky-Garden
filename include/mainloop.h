@@ -5,6 +5,7 @@
 #include <gallery.h>
 #include <menu.h>
 #include <cloud.h>
+#include <userprofile.h>
 
 // SDL2 library
 
@@ -15,7 +16,7 @@ private:
     Menu signInMenu;
     Background background;
     
-    CloudFloor potato;
+    User currentPlayer;
 
     GameState gameState;
 public:

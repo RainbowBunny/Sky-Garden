@@ -23,23 +23,29 @@ MainLoop::MainLoop(SDL_Renderer* &renderer, Gallery &gallery) {
     background = Background(gallery);
     gameState = LOGGING_IN;
 
-    potato = CloudFloor({100, 0, 900, 300});
+    currentPlayer = User("player", gallery);
+    currentPlayer.readData();
 }
 
 void MainLoop::renderGame(SDL_Renderer* &renderer, Gallery &gallery, int mouseX, int mouseY) {
     // std::cout << "Mainloop rendering..." << std::endl;
     background.renderBackground(renderer, gallery);
-    potato.render(renderer, gallery);
+
     switch (gameState) {
 
-        case LOGGING_IN: {
-            signInMenu.renderMenu(renderer, gallery, mouseX, mouseY);
-            break;
-        }
+    case LOGGING_IN: {
+        signInMenu.renderMenu(renderer, gallery, mouseX, mouseY);
+        break;
+    }
 
-        default: {
-            break;
-        }
+    case GAME_SCREEN: {
+        currentPlayer.renderUser(renderer, gallery);
+        break;
+    }
+
+    default: {
+        break;
+    }
     }
     // std::cout << "Done" << std::endl;
 }
@@ -47,60 +53,69 @@ void MainLoop::renderGame(SDL_Renderer* &renderer, Gallery &gallery, int mouseX,
 void MainLoop::handleUserInput(SDL_Event e, SDL_Renderer* &renderer, Gallery &gallery) {
     // std::cout << "Begin handling user input" << std::endl;
     switch (e.type) {
-        case SDL_QUIT: {
-            updateGameState(QUITTING);
-            break;
-        }
+    case SDL_QUIT: {
+        updateGameState(QUITTING);
+        break;
+    }
 
-        case SDL_MOUSEBUTTONDOWN: {
+    case SDL_MOUSEBUTTONDOWN: {
 
-            switch (gameState) {
+        switch (gameState) {
 
-                case LOGGING_IN: {
-                    std::string pressedButton = signInMenu.getPressedButton(e.button.x, e.motion.y);
-                    
-                    if (pressedButton == "Sign In") {
-                        if (e.button.button == SDL_BUTTON_LEFT) {
-                            updateGameState(GAME_SCREEN);
-                        }
+            case LOGGING_IN: {
+                std::string pressedButton = signInMenu.getPressedButton(e.button.x, e.motion.y);
+                
+                if (pressedButton == "Sign In") {
+                    if (e.button.button == SDL_BUTTON_LEFT) {
+                        updateGameState(GAME_SCREEN);
                     }
-
-                    break;
                 }
 
-                default: {
-
-                } 
-
+                break;
             }
+
+            default: {
+                break;
+            } 
 
         }
 
-        case SDL_KEYDOWN: {
+    }
 
+    case SDL_KEYDOWN: {
+
+        switch(gameState) {
+        case GAME_SCREEN: {
             switch (e.key.keysym.sym) {
 
-                case SDLK_UP: {
-                    background.moveUp();
-                    break;
-                }
-
-                case SDLK_DOWN: {
-                    background.moveDown();
-                    break;
-                }
-
-                default: {
-                    
-                }
-
+            case SDLK_UP: {
+                background.moveUp();
+                currentPlayer.moveUp();
+                break;
             }
 
+            case SDLK_DOWN: {
+                background.moveDown();
+                currentPlayer.moveDown();
+                break;
+            }
+
+            default: {
+                break;
+            }
+
+            }
         }
 
-        default: {
-            break;
         }
+
+        
+
+    }
+
+    default: {
+        break;
+    }
     }
     // std::cout << "Done" << std::endl;
 }

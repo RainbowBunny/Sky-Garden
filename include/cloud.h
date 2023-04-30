@@ -18,14 +18,14 @@ private:
     SDL_Rect potPosition, flowerPosition;
 public:
     FlowerPot();
-    FlowerPot(PictureID _image, SDL_Rect _position);
-    void updatePosition(SDL_Rect newPostion);
+    PictureID getPotImage() { return potImage; }
+    PictureID getFlowerImage() { return flowerImage; }
     void moveUp();
     void moveDown();
     void updatePotImage(PictureID newImage);
     void updateFlowerImage(PictureID newImage);
     void updatePosition(SDL_Rect newPotPosition, SDL_Rect newFlowerPosition);
-    void render(SDL_Renderer* &renderer, Gallery &gallery);
+    void renderFlowerPot(SDL_Renderer* &renderer, Gallery &gallery);
 };
 
 class CloudFloor {
@@ -37,9 +37,14 @@ private:
 public:
     CloudFloor() {}
     CloudFloor(SDL_Rect _position);
+    PictureID getPotImage(int id) { return flowerPots[id].getPotImage(); }
+    PictureID getFlowerImage(int id) { return flowerPots[id].getFlowerImage(); }
+    void updatePotImage(int id, PictureID newImage) { flowerPots[id].updatePotImage(newImage); }
+    void updateFlowerImage(int id, PictureID newImage) { flowerPots[id].updateFlowerImage(newImage); }
+    void updatePosition(int id, SDL_Rect newPotPosition, SDL_Rect newFlowerPosition) { flowerPots[id].updatePosition(newPotPosition, newFlowerPosition); }
     void moveUp();
     void moveDown();
-    void render(SDL_Renderer* &renderer, Gallery &gallery);
+    void renderCloudFloor(SDL_Renderer* &renderer, Gallery &gallery);
 };
 
 # endif

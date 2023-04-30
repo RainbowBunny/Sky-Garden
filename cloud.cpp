@@ -35,12 +35,21 @@ void FlowerPot::updatePosition(SDL_Rect newPotPosition, SDL_Rect newFlowerPositi
     flowerPosition = newFlowerPosition;
 }   
 
-void FlowerPot::render(SDL_Renderer* &renderer, Gallery &gallery) {
+void FlowerPot::renderFlowerPot(SDL_Renderer* &renderer, Gallery &gallery) {
     if (potImage != NONE) {
-        SDL_RenderCopy(renderer, gallery.getFrame(potImage, potFrame), nullptr, &potPosition);
+        if (potPosition.x >= 0 && potPosition.x + potPosition.w <= SCREEN_WIDTH && 
+            potPosition.y >= 0 && potPosition.y + potPosition.h <= SCREEN_HEIGHT && 
+            potPosition.w >  0 && potPosition.h >  0) {
+            SDL_RenderCopy(renderer, gallery.getFrame(potImage, potFrame), nullptr, &potPosition);
+        }
     }
     if (flowerImage != NONE) {
-        SDL_RenderCopy(renderer, gallery.getFrame(flowerImage, flowerFrame), nullptr, &flowerPosition);
+        if (flowerPosition.x >= 0 && flowerPosition.x + flowerPosition.w <= SCREEN_WIDTH && 
+            flowerPosition.y >= 0 && flowerPosition.y + flowerPosition.h <= SCREEN_HEIGHT && 
+            flowerPosition.w >  0 && flowerPosition.h >  0) {
+            SDL_RenderCopy(renderer, gallery.getFrame(flowerImage, flowerFrame), nullptr, &flowerPosition);
+        }
+        
     }
 }
 
@@ -56,22 +65,32 @@ CloudFloor::CloudFloor(SDL_Rect _position) {
         flowerPots[i].updatePosition({_position.x + i * potWidth + 10, _position.y + _position.h - potHeight - 25, potWidth - 20, potHeight - 20}, 
                                      {_position.x + i * potWidth, _position.y + _position.h - flowerHeight - potHeight - 15, flowerWidth, flowerHeight});
                                     
-        flowerPots[i].updateFlowerImage(PUPPY);
-        flowerPots[i].updatePotImage(POT);
+        flowerPots[i].updateFlowerImage(NONE);
+        flowerPots[i].updatePotImage(NONE);
     }
 }
 
 void CloudFloor::moveUp() {
     position.y += MOVING_SPEED;
+    for (int i = 0; i < 9; i++) {
+        flowerPots[i].moveUp();
+    }
 }
 
 void CloudFloor::moveDown() {
     position.y -= MOVING_SPEED;
+    for (int i = 0; i < 9; i++) {
+        flowerPots[i].moveDown();
+    }
 }
 
-void CloudFloor::render(SDL_Renderer* &renderer, Gallery &gallery) {
-    SDL_RenderCopy(renderer, gallery.getFrame(image, frame), nullptr, &position);
+void CloudFloor::renderCloudFloor(SDL_Renderer* &renderer, Gallery &gallery) {
+    if (position.x >= 0 && position.x + position.w <= SCREEN_WIDTH && 
+        position.y >= 0 && position.y + position.h <= SCREEN_HEIGHT && 
+        position.w >  0 && position.h >  0) {
+        SDL_RenderCopy(renderer, gallery.getFrame(image, frame), nullptr, &position);
+    }
     for (int i = 0; i < 9; i++) {
-        flowerPots[i].render(renderer, gallery);
+        flowerPots[i].renderFlowerPot(renderer, gallery);
     }
 }

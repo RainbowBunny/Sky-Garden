@@ -170,9 +170,6 @@ void Background::moveDown() {
     dstRect.h += MOVING_SPEED;
 
     srcRect.h += MOVING_SPEED * 2000 / 600;
-
-    std::cout << dstRect.x << " " << dstRect.y << " " << dstRect.w << " " << dstRect.h << std::endl;
-    std::cout << srcRect.x << " " << srcRect.y << " " << srcRect.w << " " << srcRect.h << std::endl;
 }
 
 void Background::moveUp() {

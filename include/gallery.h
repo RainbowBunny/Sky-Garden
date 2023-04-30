@@ -11,6 +11,7 @@
 // Standard library
 #include <string>
 #include <vector>
+#include <map>
 
 // enumeration for different types of image.
 enum PictureID {
@@ -36,6 +37,7 @@ private:
     void loadFont(std::string path);
     std::vector <SDL_Texture*> loadTextureFromImage(std::string path, 
         int numberOfFrame, std::string extension, SDL_BlendMode blendMode);
+
 public:
     Gallery(SDL_Renderer* _renderer);
     ~Gallery();

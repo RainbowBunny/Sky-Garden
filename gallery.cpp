@@ -12,11 +12,12 @@ Gallery::Gallery(SDL_Renderer* _renderer) {
     renderer = _renderer;
     loadFont("font/Southern.ttf");
     loadGamePictures();
+
+
 }
 
 Gallery::~Gallery() {
-    std::vector <std::vector <SDL_Texture*> > tmp;
-    pictures.swap(tmp);
+
 }
 
 void Gallery::loadFont(std::string path) {
