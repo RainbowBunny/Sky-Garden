@@ -22,11 +22,14 @@ MainLoop::MainLoop(SDL_Renderer* &renderer, Gallery &gallery) {
 
     background = Background(gallery);
     gameState = LOGGING_IN;
+
+    potato = CloudFloor({100, 0, 900, 300});
 }
 
 void MainLoop::renderGame(SDL_Renderer* &renderer, Gallery &gallery, int mouseX, int mouseY) {
     // std::cout << "Mainloop rendering..." << std::endl;
     background.renderBackground(renderer, gallery);
+    potato.render(renderer, gallery);
     switch (gameState) {
 
         case LOGGING_IN: {
@@ -38,9 +41,11 @@ void MainLoop::renderGame(SDL_Renderer* &renderer, Gallery &gallery, int mouseX,
             break;
         }
     }
+    // std::cout << "Done" << std::endl;
 }
 
 void MainLoop::handleUserInput(SDL_Event e, SDL_Renderer* &renderer, Gallery &gallery) {
+    // std::cout << "Begin handling user input" << std::endl;
     switch (e.type) {
         case SDL_QUIT: {
             updateGameState(QUITTING);
@@ -97,4 +102,5 @@ void MainLoop::handleUserInput(SDL_Event e, SDL_Renderer* &renderer, Gallery &ga
             break;
         }
     }
+    // std::cout << "Done" << std::endl;
 }

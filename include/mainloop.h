@@ -4,6 +4,7 @@
 #include <utils.h>
 #include <gallery.h>
 #include <menu.h>
+#include <cloud.h>
 
 // SDL2 library
 
@@ -13,6 +14,8 @@ class MainLoop {
 private:
     Menu signInMenu;
     Background background;
+    
+    CloudFloor potato;
 
     GameState gameState;
 public:

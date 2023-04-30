@@ -17,6 +17,11 @@ enum PictureID {
     MENU_BACKGROUND = 0,
     BUTTON,
     CLOUD,
+    PUPPY,
+    MOON_RABBIT,
+    HEART_ORCHID,
+    GHOST_CAMPANULA,
+    POT,
     NONE
 };
 

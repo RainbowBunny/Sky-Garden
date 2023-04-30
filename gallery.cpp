@@ -67,6 +67,11 @@ void Gallery::loadGamePictures() {
     pictures.push_back(loadTextureFromImage("image/menu_background", 1, ".jpg", SDL_BLENDMODE_BLEND));
     pictures.push_back(loadTextureFromImage("image/button", 1, ".png", SDL_BLENDMODE_BLEND));
     pictures.push_back(loadTextureFromImage("image/cloud", 1, ".png", SDL_BLENDMODE_BLEND));
+    pictures.push_back(loadTextureFromImage("image/puppy", 1, ".png", SDL_BLENDMODE_BLEND));
+    pictures.push_back(loadTextureFromImage("image/moon_rabbit", 1, ".png", SDL_BLENDMODE_BLEND));
+    pictures.push_back(loadTextureFromImage("image/heart_orchid", 1, ".png", SDL_BLENDMODE_BLEND));
+    pictures.push_back(loadTextureFromImage("image/ghost_campanula", 1, ".png", SDL_BLENDMODE_BLEND));
+    pictures.push_back(loadTextureFromImage("image/pot", 1, ".png", SDL_BLENDMODE_BLEND));
 }
 
 SDL_Texture* Gallery::getFrame(PictureID obj, int &currentFrame) {

@@ -38,7 +38,7 @@ int main(int argc, char **argv) {
         // Get the number of ticks at the start of the loop
         frameStart = SDL_GetTicks();
 
-        SDL_SetRenderDrawColor(gRenderer, WHITE_COLOR.r, WHITE_COLOR.g, WHITE_COLOR.b, WHITE_COLOR.a);
+        SDL_SetRenderDrawColor(gRenderer, 188, 239, 255, 0);
         SDL_RenderClear(gRenderer);
 
         while (SDL_PollEvent(&e)) {

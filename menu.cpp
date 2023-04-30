@@ -136,11 +136,17 @@ Background::Background(Gallery &gallery) {
 }
 
 void Background::renderBackground(SDL_Renderer* &renderer, Gallery &gallery) {
-    if (backgroundID[currentState] == NONE or dstRect.w < 0) {
+    if (backgroundID[currentState] == NONE) {
         return;
     }
-    SDL_RenderCopy(renderer, gallery.getFrame(backgroundID[currentState], frame), &srcRect, &dstRect);
-    frame++;
+
+    if (dstRect.x >= 0 && dstRect.x + dstRect.w <= SCREEN_WIDTH && 
+        dstRect.y >= 0 && dstRect.y + dstRect.h <= SCREEN_HEIGHT && 
+        dstRect.w >  0 && dstRect.h >  0) {
+        SDL_RenderCopy(renderer, gallery.getFrame(backgroundID[currentState], frame), &srcRect, &dstRect);
+        frame++;
+    }
+    
 }
 
 void Background::setBackgroundState(GameState state) {
@@ -163,7 +169,7 @@ void Background::moveDown() {
     dstRect.y -= MOVING_SPEED;
     dstRect.h += MOVING_SPEED;
 
-    srcRect.h += MOVING_SPEED * srcRect.h / windowHeight;
+    srcRect.h += MOVING_SPEED * 2000 / 600;
 
     std::cout << dstRect.x << " " << dstRect.y << " " << dstRect.w << " " << dstRect.h << std::endl;
     std::cout << srcRect.x << " " << srcRect.y << " " << srcRect.w << " " << srcRect.h << std::endl;
@@ -179,7 +185,7 @@ void Background::moveUp() {
     dstRect.y += MOVING_SPEED;
     dstRect.h -= MOVING_SPEED;
 
-    srcRect.h -= MOVING_SPEED * srcRect.h / windowHeight;
+    srcRect.h -= MOVING_SPEED * 2000 / 600;
 
     std::cout << dstRect.x << " " << dstRect.y << " " << dstRect.w << " " << dstRect.h << std::endl;
     std::cout << srcRect.x << " " << srcRect.y << " " << srcRect.w << " " << srcRect.h << std::endl;

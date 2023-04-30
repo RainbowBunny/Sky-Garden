@@ -10,8 +10,8 @@
 
 const int FPS = 60;
 const int FRAME_DELAY = 1000 / FPS;
-const int SCREEN_WIDTH = 900;
-const int SCREEN_HEIGHT = 650;
+const int SCREEN_WIDTH = 1000;
+const int SCREEN_HEIGHT = 600;
 const int CELL_SIZE = 80;
 const int MAXIMUM_BURNING_CELL = 28;
 
