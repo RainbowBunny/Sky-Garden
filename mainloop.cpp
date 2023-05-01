@@ -20,6 +20,11 @@ MainLoop::MainLoop(SDL_Renderer* &renderer, Gallery &gallery) {
     signInMenu.updateBothButton("Sign In", "Sign In");
     signInMenu.updateBothButton("Sign Up", "Sign Up");
 
+    toolBoxMenu = loadMenuFromFile("data/toolbox_menu.txt", renderer, gallery);
+    toolBoxMenuBackGround = loadMenuFromFile("data/background_of_toolbox_menu.txt", renderer, gallery);
+    toolBoxState = "Friends";
+    toolBoxMenu.updateButtonState("Friends", true);
+
     background = Background(gallery);
     gameState = LOGGING_IN;
 
@@ -34,12 +39,14 @@ void MainLoop::renderGame(SDL_Renderer* &renderer, Gallery &gallery, int mouseX,
     switch (gameState) {
 
     case LOGGING_IN: {
-        signInMenu.renderMenu(renderer, gallery, mouseX, mouseY);
+        signInMenu.renderMenu(renderer, gallery);
         break;
     }
 
     case GAME_SCREEN: {
         currentPlayer.renderUser(renderer, gallery);
+        toolBoxMenu.renderMenu(renderer, gallery);
+        toolBoxMenuBackGround.renderMenu(renderer, gallery);
         break;
     }
 
@@ -63,7 +70,7 @@ void MainLoop::handleUserInput(SDL_Event e, SDL_Renderer* &renderer, Gallery &ga
         switch (gameState) {
 
             case LOGGING_IN: {
-                std::string pressedButton = signInMenu.getPressedButton(e.button.x, e.motion.y);
+                std::string pressedButton = signInMenu.getPressedButton(e.button.x, e.button.y);
                 
                 if (pressedButton == "Sign In") {
                     if (e.button.button == SDL_BUTTON_LEFT) {
@@ -72,6 +79,33 @@ void MainLoop::handleUserInput(SDL_Event e, SDL_Renderer* &renderer, Gallery &ga
                 }
 
                 break;
+            }
+
+            case GAME_SCREEN: {
+                std::string pressedButton = toolBoxMenu.getPressedButton(e.button.x, e.button.y);
+
+                if (pressedButton == "Friends") {
+
+                    toolBoxMenu.updateButtonState(toolBoxState, false);
+                    toolBoxMenu.updateButtonState("Friends", true);
+                    toolBoxState = "Friends";
+
+                } else if (pressedButton == "Pots") {
+
+                    toolBoxMenu.updateButtonState(toolBoxState, false);
+                    toolBoxMenu.updateButtonState("Pots", true);
+                    toolBoxState = "Pots";
+
+                } else if (pressedButton == "Seedlings") {
+
+                    toolBoxMenu.updateButtonState(toolBoxState, false);
+                    toolBoxMenu.updateButtonState("Seedlings", true);
+                    toolBoxState = "Seedlings";
+
+                } else {
+                    std::cout << "Watermelon?" << std::endl;
+                    std::cout << pressedButton << std::endl;
+                }
             }
 
             default: {

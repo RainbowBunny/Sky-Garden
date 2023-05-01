@@ -54,7 +54,7 @@ void User::readData() {
     garden.resize(floor);
 
     for (int i = 0; i < floor; i++) {
-        garden[i] = CloudFloor({100, 0 - 300 * (i + 1), 900, 300});
+        garden[i] = CloudFloor({100, 0 - 300 * (i + 1) - 45, 900, 210});
         for (int j = 0; j < 9; j++) {
             std::string pot, flower;
             fin >> pot >> flower;

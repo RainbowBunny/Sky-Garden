@@ -65,14 +65,29 @@ void Gallery::loadGamePictures() {
     };
     */
 
+    // loading background
+
     pictures.push_back(loadTextureFromImage("image/menu_background", 1, ".jpg", SDL_BLENDMODE_BLEND));
     pictures.push_back(loadTextureFromImage("image/button", 1, ".png", SDL_BLENDMODE_BLEND));
     pictures.push_back(loadTextureFromImage("image/cloud", 1, ".png", SDL_BLENDMODE_BLEND));
-    pictures.push_back(loadTextureFromImage("image/puppy", 1, ".png", SDL_BLENDMODE_BLEND));
-    pictures.push_back(loadTextureFromImage("image/moon_rabbit", 1, ".png", SDL_BLENDMODE_BLEND));
-    pictures.push_back(loadTextureFromImage("image/heart_orchid", 1, ".png", SDL_BLENDMODE_BLEND));
-    pictures.push_back(loadTextureFromImage("image/ghost_campanula", 1, ".png", SDL_BLENDMODE_BLEND));
-    pictures.push_back(loadTextureFromImage("image/pot", 1, ".png", SDL_BLENDMODE_BLEND));
+    
+    // loading flowers
+    pictures.push_back(loadTextureFromImage("image/flower/puppy", 1, ".png", SDL_BLENDMODE_BLEND));
+    pictures.push_back(loadTextureFromImage("image/flower/moon_rabbit", 1, ".png", SDL_BLENDMODE_BLEND));
+    pictures.push_back(loadTextureFromImage("image/flower/heart_orchid", 1, ".png", SDL_BLENDMODE_BLEND));
+    pictures.push_back(loadTextureFromImage("image/flower/ghost_campanula", 1, ".png", SDL_BLENDMODE_BLEND));
+    
+    // loading pots
+    pictures.push_back(loadTextureFromImage("image/pot/pot", 1, ".png", SDL_BLENDMODE_BLEND));
+
+    // loading game icons
+    pictures.push_back(loadTextureFromImage("image/game_icon/normal_friend_icon", 1, ".png", SDL_BLENDMODE_BLEND));
+    pictures.push_back(loadTextureFromImage("image/game_icon/choosing_friend_icon", 1, ".png", SDL_BLENDMODE_BLEND));
+    pictures.push_back(loadTextureFromImage("image/game_icon/normal_pot_icon", 1, ".png", SDL_BLENDMODE_BLEND));
+    pictures.push_back(loadTextureFromImage("image/game_icon/choosing_pot_icon", 1, ".png", SDL_BLENDMODE_BLEND));
+    pictures.push_back(loadTextureFromImage("image/game_icon/normal_seedling_icon", 1, ".png", SDL_BLENDMODE_BLEND));
+    pictures.push_back(loadTextureFromImage("image/game_icon/choosing_seedling_icon", 1, ".png", SDL_BLENDMODE_BLEND));
+    pictures.push_back(loadTextureFromImage("image/game_icon/toolbox_background", 1, ".png", SDL_BLENDMODE_BLEND));
 }
 
 SDL_Texture* Gallery::getFrame(PictureID obj, int &currentFrame) {

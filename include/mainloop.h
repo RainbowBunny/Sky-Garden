@@ -10,13 +10,15 @@
 // SDL2 library
 
 // Standard library
-
 class MainLoop {
 private:
     Menu signInMenu;
+    Menu toolBoxMenu, toolBoxMenuBackGround;
     Background background;
     
     User currentPlayer;
+
+    std::string toolBoxState;
 
     GameState gameState;
 public:

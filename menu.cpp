@@ -18,8 +18,8 @@ bool Button::isChoosing(int mouseX, int mouseY) {
         mouseY >= buttonRect.y && mouseY <= buttonRect.y + buttonRect.h;
 }
 
-void Button::renderButton(SDL_Renderer* &renderer, Gallery& gallery, int mouseX, int mouseY) {
-    if (isChoosing(mouseX, mouseY)) {
+void Button::renderButton(SDL_Renderer* &renderer, Gallery& gallery) {
+    if (isSpecial) {
         special.renderTextBox(renderer, gallery);
     } else {
         normal.renderTextBox(renderer, gallery);
@@ -34,9 +34,9 @@ Menu::Menu(std::vector <std::string> _buttonName, std::vector <SDL_Rect> _button
     }
 }
 
-void Menu::renderMenu(SDL_Renderer* &renderer, Gallery& gallery, int mouseX, int mouseY) {
+void Menu::renderMenu(SDL_Renderer* &renderer, Gallery& gallery) {
     for (int i = 0; i < (int)buttonList.size(); i++) {
-        buttonList[i].renderButton(renderer, gallery, mouseX, mouseY);
+        buttonList[i].renderButton(renderer, gallery);
     }
 }
 
@@ -110,6 +110,14 @@ std::string Menu::getPressedButton(int mouseX, int mouseY) {
         }
     }
     return "none";
+}
+
+void Menu::updateButtonState(std::string buttonName, bool newState) {
+    for (int i = 0; i < (int)buttonList.size(); i++) {
+        if (buttonList[i].getButtonName() == buttonName) {
+            buttonList[i].updateState(newState);
+        }
+    }
 }
 
 Background::Background(Gallery &gallery) {
@@ -200,6 +208,16 @@ void Textbox::renderTextBox(SDL_Renderer* &renderer, Gallery &gallery) {
 }
 
 Textbox createTextboxFromFile(std::ifstream &fin) {
+    std::map <std::string, PictureID> stringToPictureID;
+
+    stringToPictureID["BUTTON"] = BUTTON;
+    stringToPictureID["NORMAL_FRIEND_BUTTON"] = NORMAL_FRIEND_BUTTON;
+    stringToPictureID["SPECIAL_FRIEND_BUTTON"] = SPECIAL_FRIEND_BUTTON;
+    stringToPictureID["NORMAL_POT_CHOOSING_BUTTON"] = NORMAL_POT_CHOOSING_BUTTON;
+    stringToPictureID["SPECIAL_POT_CHOOSING_BUTTON"] = SPECIAL_POT_CHOOSING_BUTTON;
+    stringToPictureID["NORMAL_SEEDLING_CHOOSING_BUTTON"] = NORMAL_SEEDLING_CHOOSING_BUTTON;
+    stringToPictureID["SPECIAL_SEEDLING_CHOOSING_BUTTON"] = SPECIAL_SEEDLING_CHOOSING_BUTTON;
+    stringToPictureID["TOOLBOX_BACKGROUND"] = TOOLBOX_BACKGROUND;
     /*
         Input:
         - An in file stream fin.
@@ -213,11 +231,8 @@ Textbox createTextboxFromFile(std::ifstream &fin) {
     */
     std::string backgroundID;
     fin >> backgroundID;
-    std::cout << backgroundID << std::endl;
     PictureID id;
-    if (backgroundID == "BUTTON") { 
-        id = BUTTON;
-    }
+    id = stringToPictureID[backgroundID];
     
     SDL_Rect _backgroundRect, _textRect;
     SDL_Color _color;

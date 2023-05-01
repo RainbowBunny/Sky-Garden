@@ -11,6 +11,7 @@
 #include <fstream>
 #include <vector>
 #include <string>
+#include <map>
 
 class Textbox {
 private:
@@ -34,6 +35,7 @@ private:
     std::string buttonName;
     SDL_Rect buttonRect;
     Textbox normal, special;
+    bool isSpecial = false;
 public:
     Button() {};
     Button(std::string buttonName, SDL_Rect buttonRect, Textbox _normal, Textbox _special);
@@ -42,7 +44,8 @@ public:
     void updateBoth(std::string text) { updateNormal(text); updateSpecial(text); }
     void updateNormal(std::string text) { normal.updateText(text); }
     void updateSpecial(std::string text) { special.updateText(text); }
-    void renderButton(SDL_Renderer* &renderer, Gallery& gallery, int mouseX, int mouseY);
+    void updateState(bool newState) { isSpecial = newState; }
+    void renderButton(SDL_Renderer* &renderer, Gallery& gallery);
 };
 
 class Menu {
@@ -52,10 +55,11 @@ public:
     Menu() {}
     Menu(std::vector <std::string> _buttonName, std::vector <SDL_Rect> _buttonPosition, 
         std::vector <Textbox> normal, std::vector <Textbox> special);
-    void renderMenu(SDL_Renderer* &renderer, Gallery& gallery, int mouseX, int mouseY);
+    void renderMenu(SDL_Renderer* &renderer, Gallery& gallery);
     void updateButtonNormal(std::string buttonName, std::string text);
     void updateButtonSpecial(std::string buttonName, std::string text);
     void updateBothButton(std::string buttonName, std::string text);
+    void updateButtonState(std::string buttonName, bool newState);
     std::string getPressedButton(int mouseX, int mouseY);
 };
 
