@@ -51,10 +51,20 @@ void User::readData() {
 
     fin >> coin;
     fin >> floor;
-    garden.resize(floor);
+    garden.resize(floor + 1);
 
-    for (int i = 0; i < floor; i++) {
-        garden[i] = CloudFloor({100, 0 - 300 * (i + 1) - 45, 900, 210});
+    for (int i = 0; i <= floor; i++) {
+        garden[i] = CloudFloor({50, 0 - 300 * (i + 1), 900, 210});
+        if (i == floor) {
+            garden[i].updateCloudImage(NEW_CLOUD_FLOOR);
+            continue;
+        }
+        if (i == floor - 1) {
+            garden[i].updateCloudImage(TOP_CLOUD_FLOOR);
+        } else {
+            garden[i].updateCloudImage(NORMAL_CLOUD_FLOOR);
+        }
+
         for (int j = 0; j < 9; j++) {
             std::string pot, flower;
             fin >> pot >> flower;
@@ -82,19 +92,19 @@ void User::writeData() {
 }
 
 void User::moveDown() {
-    for (int i = 0; i < floor; i++) {
+    for (int i = 0; i < (int)garden.size(); i++) {
         garden[i].moveDown();
     }
 }
 
 void User::moveUp() {
-    for (int i = 0; i < floor; i++) {
+    for (int i = 0; i < (int)garden.size(); i++) {
         garden[i].moveUp();
     }
 }
 
 void User::renderUser(SDL_Renderer* &renderer, Gallery &gallery) {
-    for (int i = 0; i < floor; i++) {
+    for (int i = 0; i <= floor; i++) {
         garden[i].renderCloudFloor(renderer, gallery);
     }
 }

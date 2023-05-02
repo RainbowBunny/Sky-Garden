@@ -49,6 +49,7 @@
         "ctime": "cpp",
         "ratio": "cpp",
         "sstream": "cpp",
-        "fstream": "cpp"
+        "fstream": "cpp",
+        "map": "cpp"
     }
 }

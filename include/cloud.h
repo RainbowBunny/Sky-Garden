@@ -39,6 +39,7 @@ public:
     CloudFloor(SDL_Rect _position);
     PictureID getPotImage(int id) { return flowerPots[id].getPotImage(); }
     PictureID getFlowerImage(int id) { return flowerPots[id].getFlowerImage(); }
+    void updateCloudImage(PictureID newImage) { image = newImage; }
     void updatePotImage(int id, PictureID newImage) { flowerPots[id].updatePotImage(newImage); }
     void updateFlowerImage(int id, PictureID newImage) { flowerPots[id].updateFlowerImage(newImage); }
     void updatePosition(int id, SDL_Rect newPotPosition, SDL_Rect newFlowerPosition) { flowerPots[id].updatePosition(newPotPosition, newFlowerPosition); }

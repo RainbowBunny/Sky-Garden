@@ -55,15 +55,16 @@ void FlowerPot::renderFlowerPot(SDL_Renderer* &renderer, Gallery &gallery) {
 
 CloudFloor::CloudFloor(SDL_Rect _position) {
     frame = 0;
-    image = CLOUD;
-    position = {_position.x, _position.y + _position.h * 2 / 3, _position.w, _position.h / 3};
+    image = NONE;
+    position = _position;
+
     flowerPots.resize(9);
-    int potHeight = _position.h / 3, potWidth = _position.w / 9;
-    int flowerHeight = _position.h / 3, flowerWidth = _position.w / 9;
+    int potHeight = 60, potWidth = 60;
+    int flowerHeight = 60, flowerWidth = 60;
 
     for (int i = 0; i < 9; i++) {
-        flowerPots[i].updatePosition({_position.x + i * potWidth + 10, _position.y + _position.h - potHeight - 25, potWidth - 20, potHeight - 20}, 
-                                     {_position.x + i * potWidth, _position.y + _position.h - flowerHeight - potHeight - 15, flowerWidth, flowerHeight});
+        flowerPots[i].updatePosition({_position.x + i * (potWidth + 16) + 190, _position.y + _position.h - potHeight - 40, potWidth, potHeight}, 
+                                     {_position.x + i * (potWidth + 16) + 190, _position.y + _position.h - flowerHeight - potHeight - 20, flowerWidth, flowerHeight});
                                     
         flowerPots[i].updateFlowerImage(NONE);
         flowerPots[i].updatePotImage(NONE);

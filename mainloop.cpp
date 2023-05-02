@@ -104,7 +104,6 @@ void MainLoop::handleUserInput(SDL_Event e, SDL_Renderer* &renderer, Gallery &ga
 
                 } else {
                     std::cout << "Watermelon?" << std::endl;
-                    std::cout << pressedButton << std::endl;
                 }
             }
 

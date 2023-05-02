@@ -12,8 +12,6 @@ Gallery::Gallery(SDL_Renderer* _renderer) {
     renderer = _renderer;
     loadFont("font/Southern.ttf");
     loadGamePictures();
-
-
 }
 
 Gallery::~Gallery() {
@@ -69,7 +67,6 @@ void Gallery::loadGamePictures() {
 
     pictures.push_back(loadTextureFromImage("image/menu_background", 1, ".jpg", SDL_BLENDMODE_BLEND));
     pictures.push_back(loadTextureFromImage("image/button", 1, ".png", SDL_BLENDMODE_BLEND));
-    pictures.push_back(loadTextureFromImage("image/cloud", 1, ".png", SDL_BLENDMODE_BLEND));
     
     // loading flowers
     pictures.push_back(loadTextureFromImage("image/flower/puppy", 1, ".png", SDL_BLENDMODE_BLEND));
@@ -88,6 +85,11 @@ void Gallery::loadGamePictures() {
     pictures.push_back(loadTextureFromImage("image/game_icon/normal_seedling_icon", 1, ".png", SDL_BLENDMODE_BLEND));
     pictures.push_back(loadTextureFromImage("image/game_icon/choosing_seedling_icon", 1, ".png", SDL_BLENDMODE_BLEND));
     pictures.push_back(loadTextureFromImage("image/game_icon/toolbox_background", 1, ".png", SDL_BLENDMODE_BLEND));
+
+    // loading cloud
+    pictures.push_back(loadTextureFromImage("image/cloud/new_cloud_floor", 1, ".png", SDL_BLENDMODE_BLEND));
+    pictures.push_back(loadTextureFromImage("image/cloud/normal_cloud_floor", 1, ".png", SDL_BLENDMODE_BLEND));
+    pictures.push_back(loadTextureFromImage("image/cloud/top_cloud_floor", 1, ".png", SDL_BLENDMODE_BLEND));
 }
 
 SDL_Texture* Gallery::getFrame(PictureID obj, int &currentFrame) {
