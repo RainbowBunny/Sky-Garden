@@ -33,5 +33,8 @@ public:
 
     bool addPot(int x, int y, PictureID pot);
     bool addFlower(int x, int y, PictureID flower);
+    bool removeFlower(int mouseX, int mouseY);
+    bool gatherFlower(int mouseX, int mouseY);
+
     void renderUser(SDL_Renderer* &renderer, Gallery &gallery);
 };

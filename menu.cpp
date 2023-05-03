@@ -34,7 +34,10 @@ Textbox createTextboxFromFile(std::ifstream &fin) {
                          {"SPECIAL_POT_CHOOSING_BUTTON", SPECIAL_POT_CHOOSING_BUTTON},
                          {"NORMAL_SEEDLING_CHOOSING_BUTTON", NORMAL_SEEDLING_CHOOSING_BUTTON},
                          {"SPECIAL_SEEDLING_CHOOSING_BUTTON", SPECIAL_SEEDLING_CHOOSING_BUTTON},
-                         {"TOOLBOX_BACKGROUND", TOOLBOX_BACKGROUND}};
+                         {"TOOLBOX_BACKGROUND", TOOLBOX_BACKGROUND},
+                         {"HAND", HAND},
+                         {"SHOVEL", SHOVEL},
+                         {"QUEST_LOG", QUEST_LOG}};
 
     /*
         Input:

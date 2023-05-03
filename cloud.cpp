@@ -36,11 +36,11 @@ void FlowerPot::updatePosition(SDL_Rect newPotPosition, SDL_Rect newFlowerPositi
 }   
 
 bool FlowerPot::isChoosingPot(int mouseX, int mouseY) {
-    return isInside(potPosition, mouseX, mouseY);
+    return isInside(potPosition, mouseX, mouseY) | isInside(flowerPosition, mouseX, mouseY);
 }
 
 bool FlowerPot::isChoosingFlower(int mouseX, int mouseY) {
-    return isInside(flowerPosition, mouseX, mouseY);
+    return isInside(potPosition, mouseX, mouseY) | isInside(flowerPosition, mouseX, mouseY);
 }
 
 bool FlowerPot::placePot(PictureID newPot) {
@@ -74,6 +74,20 @@ void FlowerPot::renderFlowerPot(SDL_Renderer* &renderer, Gallery &gallery) {
             SDL_RenderCopy(renderer, gallery.getFrame(flowerImage, flowerFrame), nullptr, &flowerPosition);
         }
     }
+}
+
+bool FlowerPot::removeFlower() {
+    if (getFlowerImage() != NONE) {
+        updateFlowerImage(NONE);
+        return true;
+    }
+    return false;
+}
+
+PictureID FlowerPot::gatherFlower() {
+    PictureID currentFlower = getFlowerImage();
+    removeFlower();
+    return currentFlower;
 }
 
 CloudFloor::CloudFloor(SDL_Rect _position) {
@@ -128,6 +142,24 @@ bool CloudFloor::placeFlower(int mouseX, int mouseY, PictureID flowerImage) {
         }
     }
     return false;
+}
+
+bool CloudFloor::removeFlower(int mouseX, int mouseY) {
+    for (int i = 0; i < 9; i++) {
+        if (flowerPots[i].isChoosingFlower(mouseX, mouseY)) {
+            return flowerPots[i].removeFlower();
+        }
+    }
+    return false;
+}
+
+PictureID CloudFloor::gatherFlower(int mouseX, int mouseY) {
+    for (int i = 0; i < 9; i++) {
+        if (flowerPots[i].isChoosingFlower(mouseX, mouseY)) {
+            return flowerPots[i].gatherFlower();
+        }
+    }
+    return NONE;
 }
 
 void CloudFloor::renderCloudFloor(SDL_Renderer* &renderer, Gallery &gallery) {

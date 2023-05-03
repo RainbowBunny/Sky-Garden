@@ -85,6 +85,9 @@ void Gallery::loadGamePictures() {
     pictures.push_back(loadTextureFromImage("image/game_icon/normal_seedling_icon", 1, ".png", SDL_BLENDMODE_BLEND));
     pictures.push_back(loadTextureFromImage("image/game_icon/choosing_seedling_icon", 1, ".png", SDL_BLENDMODE_BLEND));
     pictures.push_back(loadTextureFromImage("image/game_icon/toolbox_background", 1, ".png", SDL_BLENDMODE_BLEND));
+    pictures.push_back(loadTextureFromImage("image/game_icon/gatherer", 1, ".png", SDL_BLENDMODE_BLEND));
+    pictures.push_back(loadTextureFromImage("image/game_icon/shovel", 1, ".png", SDL_BLENDMODE_BLEND));
+    pictures.push_back(loadTextureFromImage("image/game_icon/quest_log", 1, ".png", SDL_BLENDMODE_BLEND));
 
     // loading cloud
     pictures.push_back(loadTextureFromImage("image/cloud/new_cloud_floor", 1, ".png", SDL_BLENDMODE_BLEND));

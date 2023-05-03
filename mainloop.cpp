@@ -49,6 +49,12 @@ MainLoop::MainLoop(SDL_Renderer* &renderer, Gallery &gallery) {
     
     pots = {{"POT", POT},
             {"NONE", NONE}};
+
+    items = {{"QUEST_LOG", QUEST_LOG},
+             {"SHOVEL", SHOVEL},
+             {"HAND", HAND}};
+    
+    utilitiesMenu = loadMenuFromFile("data/gardening_tool.txt", renderer, gallery);
 }
 
 void MainLoop::renderGame(SDL_Renderer* &renderer, Gallery &gallery, int mouseX, int mouseY) {
@@ -76,6 +82,8 @@ void MainLoop::renderGame(SDL_Renderer* &renderer, Gallery &gallery, int mouseX,
         }
         
         currentObjectScreen.renderButton(renderer, gallery);
+
+        utilitiesMenu.renderMenu(renderer, gallery);
         break;
     }
 
@@ -120,6 +128,14 @@ void MainLoop::handleUserInput(SDL_Event e, SDL_Renderer* &renderer, Gallery &ga
                     break;
                 }
 
+                if (choosingObject == "SHOVEL" && currentPlayer.removeFlower(e.button.x, e.button.y)) {
+                    break;
+                }
+
+                if (choosingObject == "HAND" && currentPlayer.gatherFlower(e.button.x, e.button.y)) {
+                    break;
+                }
+
                 std::string pressedButton;
 
                 pressedButton = toolBoxMenu.getPressedButton(e.button.x, e.button.y);
@@ -145,6 +161,15 @@ void MainLoop::handleUserInput(SDL_Event e, SDL_Renderer* &renderer, Gallery &ga
                     toolBoxState = "Seedlings";
                     break;
 
+                }
+
+                pressedButton = utilitiesMenu.getPressedButton(e.button.x, e.button.y);
+                if (pressedButton == "QUEST_LOG") {
+                    break;
+                } else if (pressedButton == "HAND" or pressedButton == "SHOVEL") {
+                    choosingObject = pressedButton;
+                    currentObjectScreen.updateBothImage(items[pressedButton]);
+                    break;
                 }
 
                 if (toolBoxState == "Friends") {

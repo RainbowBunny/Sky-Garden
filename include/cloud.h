@@ -32,6 +32,8 @@ public:
 
     bool placePot(PictureID newPot);
     bool placeFlower(PictureID newFlower);
+    bool removeFlower();
+    PictureID gatherFlower();
 
     void renderFlowerPot(SDL_Renderer* &renderer, Gallery &gallery);
 };
@@ -59,6 +61,8 @@ public:
     bool isInsideFloor(int mouseX, int mouseY);
     bool placePot(int mouseX, int mouseY, PictureID potImage);
     bool placeFlower(int mouseX, int mouseY, PictureID flowerImage);
+    bool removeFlower(int mouseX, int mouseY);
+    PictureID gatherFlower(int mouseX, int mouseY);
 
     void renderCloudFloor(SDL_Renderer* &renderer, Gallery &gallery);
 };

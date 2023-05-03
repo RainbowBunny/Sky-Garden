@@ -124,6 +124,27 @@ bool User::addFlower(int mouseX, int mouseY, PictureID flower) {
     return false;
 }
 
+bool User::removeFlower(int mouseX, int mouseY) {
+    for (int i = 0; i < floor; i++) {
+        if (garden[i].isInsideFloor(mouseX, mouseY)) {
+            return garden[i].removeFlower(mouseX, mouseY);
+        }
+    }
+    return false;
+}
+
+bool User::gatherFlower(int mouseX, int mouseY) {
+    for (int i = 0; i < floor; i++) {
+        if (garden[i].isInsideFloor(mouseX, mouseY)) {
+            if (garden[i].gatherFlower(mouseX, mouseY) != NONE) {
+                return true;
+            }
+            return false;
+        }
+    }
+    return false;
+}
+
 void User::renderUser(SDL_Renderer* &renderer, Gallery &gallery) {
     for (int i = 0; i < (int)garden.size(); i++) {
         garden[i].renderCloudFloor(renderer, gallery);

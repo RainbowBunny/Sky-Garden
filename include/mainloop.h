@@ -18,6 +18,7 @@ private:
     Menu toolBoxMenu, toolBoxMenuBackGround;
 
     Menu flowerChoosingMenu, potChoosingMenu;
+    Menu utilitiesMenu;
     Background background;
     
     User currentPlayer;
@@ -28,7 +29,7 @@ private:
 
     GameState gameState;
 
-    std::map <std::string, PictureID> pots, flowers;    
+    std::map <std::string, PictureID> pots, flowers, items;    
 public:
     MainLoop(SDL_Renderer* &renderer, Gallery &gallery);
     void updateGameState(GameState state) { gameState = state; }
