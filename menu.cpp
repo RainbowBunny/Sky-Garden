@@ -27,6 +27,7 @@ Textbox createTextboxFromFile(std::ifstream &fin) {
                          {"MOON_RABBIT", MOON_RABBIT},
                          {"HEART_ORCHID", HEART_ORCHID},
                          {"GHOST_CAMPANULA", GHOST_CAMPANULA},
+                         {"SEEDLING", SEEDLING},
                          {"POT", POT},
                          {"NORMAL_FRIEND_BUTTON", NORMAL_FRIEND_BUTTON},
                          {"SPECIAL_FRIEND_BUTTON", SPECIAL_FRIEND_BUTTON},
@@ -81,6 +82,16 @@ void Textbox::movingLeft(int movingSpeed) {
 void Textbox::movingRight(int movingSpeed) {
     backgroundRect.x += movingSpeed;
     textRect.x += movingSpeed;
+}
+
+void Textbox::movingUp(int movingSpeed) {
+    backgroundRect.y += movingSpeed;
+    textRect.y += movingSpeed;
+}
+
+void Textbox::movingDown(int movingSpeed) {
+    backgroundRect.y -= movingSpeed;
+    textRect.y -= movingSpeed;
 }
 
 Button::Button(std::string _buttonName, SDL_Rect _buttonRect, Textbox _normal, Textbox _special) {
@@ -301,30 +312,4 @@ void Background::setBackgroundState(GameState state) {
     int tmp = 0;
     SDL_QueryTexture(gallery->getFrame(backgroundID[state], tmp), nullptr, nullptr, &srcRect.w, &srcRect.h);
     dstRect = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
-}
-
-void Background::moveDown(int movingSpeed) {
-    /*
-        Go to lower cloud level
-    */
-
-    int pictureHeight = srcRect.h, windowHeight = dstRect.h;
-
-    dstRect.y -= movingSpeed;
-    dstRect.h += movingSpeed;
-
-    srcRect.h += movingSpeed * 2000 / 600;
-}
-
-void Background::moveUp(int movingSpeed) {
-    /*
-        Go to higher cloud level
-    */
-
-    int pictureHeight = srcRect.h, windowHeight = dstRect.h;
-
-    dstRect.y += movingSpeed;
-    dstRect.h -= movingSpeed;
-
-    srcRect.h -= movingSpeed * 2000 / 600;
 }

@@ -30,6 +30,9 @@ public:
     void movingLeft(int movingSpeed);
     void movingRight(int movingSpeed);
 
+    void movingUp(int movingSpeed);
+    void movingDown(int movingSpeed);
+
     void updateImage(PictureID newImageID) { background = newImageID; }
 };
 
@@ -100,8 +103,6 @@ public:
     Background() {}
     Background(Gallery &gallery);
     void setBackgroundState(GameState state);
-    void moveDown(int movingSpeed);
-    void moveUp(int movingSpeed);
     void renderBackground(SDL_Renderer* &renderer, Gallery &gallery);
 };
 

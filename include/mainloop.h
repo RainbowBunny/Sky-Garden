@@ -17,7 +17,6 @@ private:
     Menu signInMenu;
     Menu toolBoxMenu, toolBoxMenuBackGround;
 
-    Menu flowerChoosingMenu, potChoosingMenu;
     Menu utilitiesMenu;
     Background background;
     

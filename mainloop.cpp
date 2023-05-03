@@ -25,16 +25,10 @@ MainLoop::MainLoop(SDL_Renderer* &renderer, Gallery &gallery) {
     toolBoxState = "Friends";
     toolBoxMenu.updateButtonState("Friends", true);
 
-    flowerChoosingMenu = loadMenuFromFile("data/flower_menu.txt", renderer, gallery);
-    flowerChoosingMenu.updateActivation(0, 6);
-
-    potChoosingMenu = loadMenuFromFile("data/pot_menu.txt", renderer, gallery);
-    potChoosingMenu.updateActivation(0, 6);
-
     background = Background(gallery);
     gameState = LOGGING_IN;
 
-    currentPlayer = User("player", gallery);
+    currentPlayer = User("player", renderer, gallery);
     currentPlayer.readData();
 
     currentObjectScreen = Button("Choosing Object", {900, 500, 100, 100},
@@ -59,7 +53,11 @@ MainLoop::MainLoop(SDL_Renderer* &renderer, Gallery &gallery) {
 
 void MainLoop::renderGame(SDL_Renderer* &renderer, Gallery &gallery, int mouseX, int mouseY) {
     // std::cout << "Mainloop rendering..." << std::endl;
-    background.renderBackground(renderer, gallery);
+    if (gameState == GAME_SCREEN && currentPlayer.getCurrentFloor() > 0) {
+        
+    } else {
+        background.renderBackground(renderer, gallery);
+    }
 
     switch (gameState) {
 
@@ -76,9 +74,9 @@ void MainLoop::renderGame(SDL_Renderer* &renderer, Gallery &gallery, int mouseX,
         if (toolBoxState == "Friends") {
             
         } else if (toolBoxState == "Pots") {
-            potChoosingMenu.renderMenu(renderer, gallery);
+            currentPlayer.renderPotChoosingMenu(renderer, gallery);
         } else if (toolBoxState == "Seedlings") {
-            flowerChoosingMenu.renderMenu(renderer, gallery);
+            currentPlayer.renderFlowerChoosingMenu(renderer, gallery);
         }
         
         currentObjectScreen.renderButton(renderer, gallery);
@@ -124,7 +122,7 @@ void MainLoop::handleUserInput(SDL_Event e, SDL_Renderer* &renderer, Gallery &ga
                     break;
                 }
 
-                if (flowers.count(choosingObject) && currentPlayer.addFlower(e.button.x, e.button.y, flowers[choosingObject])) {
+                if (flowers.count(choosingObject) && currentPlayer.addFlower(e.button.x, e.button.y, flowers[choosingObject], choosingObject)) {
                     break;
                 }
 
@@ -175,12 +173,12 @@ void MainLoop::handleUserInput(SDL_Event e, SDL_Renderer* &renderer, Gallery &ga
                 if (toolBoxState == "Friends") {
 
                 } else if (toolBoxState == "Pots") {
-                    pressedButton = potChoosingMenu.getPressedButton(e.button.x, e.button.y);
+                    pressedButton = currentPlayer.potChoosingMenu.getPressedButton(e.button.x, e.button.y);
                     choosingObject = pressedButton;
                     currentObjectScreen.updateBothImage(pots[pressedButton]);
                     break;
                 } else if (toolBoxState == "Seedlings") {
-                    pressedButton = flowerChoosingMenu.getPressedButton(e.button.x, e.button.y);
+                    pressedButton = currentPlayer.flowerChoosingMenu.getPressedButton(e.button.x, e.button.y);
                     choosingObject = pressedButton;
                     currentObjectScreen.updateBothImage(flowers[pressedButton]);
                     break;
@@ -204,24 +202,22 @@ void MainLoop::handleUserInput(SDL_Event e, SDL_Renderer* &renderer, Gallery &ga
             switch (e.key.keysym.sym) {
 
             case SDLK_UP: {
-                background.moveUp(210);
                 currentPlayer.moveUp();
                 break;
             }
 
             case SDLK_DOWN: {
-                background.moveDown(210);
                 currentPlayer.moveDown();
                 break;
             }
 
             case SDLK_LEFT: {
-                flowerChoosingMenu.movingRight();
+                currentPlayer.flowerChoosingMenu.movingRight();
                 break;
             }
 
             case SDLK_RIGHT: {
-                flowerChoosingMenu.movingLeft();
+                currentPlayer.flowerChoosingMenu.movingLeft();
                 break;
             }
 

@@ -9,7 +9,9 @@ User::User() {
     
 }
 
-User::User(std::string _name, Gallery gallery) {
+User::User(std::string _name, SDL_Renderer* &renderer, Gallery &gallery) {
+    currentFloor = 0;
+
     name = _name;
     gallery = gallery;
 
@@ -33,6 +35,12 @@ User::User(std::string _name, Gallery gallery) {
 
     potToName[POT] = "POT";
     potToName[NONE] = "NONE";
+
+    flowerChoosingMenu = loadMenuFromFile("data/flower_menu.txt", renderer, gallery);
+    flowerChoosingMenu.updateActivation(0, 6);
+
+    potChoosingMenu = loadMenuFromFile("data/pot_menu.txt", renderer, gallery);
+    potChoosingMenu.updateActivation(0, 6);
 }
 
 void User::createProfile() {
@@ -70,10 +78,30 @@ void User::readData() {
 
         for (int j = 0; j < 9; j++) {
             std::string pot, flower;
-            fin >> pot >> flower;
+            Uint64 plantedTime;
+            fin >> pot >> flower >> plantedTime;
             garden[i].updateFlowerImage(j, nameToFlower[flower]);
             garden[i].updatePotImage(j, nameToPot[pot]);
+            garden[i].updatePlantedTime(j, plantedTime);
+            garden[i].updateFlowerName(j, flower);
         }
+    }
+
+    int numberOfFlowerTypes, numberOfPotTypes;
+    fin >> numberOfFlowerTypes;
+    for (int i = 0; i < numberOfFlowerTypes; i++) {
+        std::string flowerName;
+        int count;
+        fin >> flowerName >> count;
+        flowerData[nameToFlower[flowerName]] = count;
+    }
+
+    fin >> numberOfPotTypes;
+    for (int i = 0; i < numberOfPotTypes; i++) {
+        std::string potName;
+        int count;
+        fin >> potName >> count;
+        potData[nameToPot[potName]] = count;
     }
 
     std::cout << "Finished reading user data" << std::endl;
@@ -89,36 +117,75 @@ void User::writeData() {
     for (int i = 0; i < floor; i++) {
         for (int j = 0; j < 9; j++) {
             fout << potToName[garden[i].getPotImage(j)] << " " 
-                 << flowerToName[garden[i].getFlowerImage(j)] << std::endl;
+                 << flowerToName[garden[i].getFlowerImage(j)] << " " 
+                 << garden[i].getPlantedTime(j) << std::endl;
         }
+    }
+
+    fout << (int)flowerData.size() << std::endl;
+    for (auto flower : flowerData) {
+        fout << flowerToName[flower.first] << " " << flower.second << std::endl;
+    }
+
+    fout << (int)potData.size() << std::endl;
+    for (auto pot : potData) {
+        fout << potToName[pot.first] << " " << pot.second << std::endl;
     }
 }
 
 void User::moveDown() {
     for (int i = 0; i < (int)garden.size(); i++) {
-        garden[i].moveDown(210);
+        if (currentFloor == 1) {
+            garden[i].moveDown(420);
+        } else if (currentFloor > 1) {
+            garden[i].moveDown(210);
+        }   
+    }
+    if (currentFloor > 0) {
+        currentFloor--;
     }
 }
 
 void User::moveUp() {
     for (int i = 0; i < (int)garden.size(); i++) {
-        garden[i].moveUp(210);
+        if (currentFloor == 0) {
+            garden[i].moveUp(420);
+        } else if (currentFloor < floor){
+            garden[i].moveUp(210);
+        }
+    }
+    if (currentFloor < floor) {
+        currentFloor++;
     }
 }
 
 bool User::addPot(int mouseX, int mouseY, PictureID pot) {
+    if (pot == NONE or potData[pot] == 0) {
+        return false;
+    }
     for (int i = 0; i < floor; i++) {
         if (garden[i].isInsideFloor(mouseX, mouseY)) {
-            return garden[i].placePot(mouseX, mouseY, pot);
+            bool ok = garden[i].placePot(mouseX, mouseY, pot);
+            if (ok) {
+                potData[pot]--;
+            }
+            return ok;
         }
     }
     return false;
 }
 
-bool User::addFlower(int mouseX, int mouseY, PictureID flower) {
+bool User::addFlower(int mouseX, int mouseY, PictureID flower, std::string flowerName) {
+    if (flower == NONE or flowerData[flower] == 0) {
+        return false;
+    }
     for (int i = 0; i < floor; i++) {
         if (garden[i].isInsideFloor(mouseX, mouseY)) {
-            return garden[i].placeFlower(mouseX, mouseY, flower);
+            bool ok = garden[i].placeFlower(mouseX, mouseY, flower, flowerName);
+            if (ok) {
+                flowerData[flower]--;
+            }
+            return ok;
         }
     }
     return false;
@@ -136,7 +203,9 @@ bool User::removeFlower(int mouseX, int mouseY) {
 bool User::gatherFlower(int mouseX, int mouseY) {
     for (int i = 0; i < floor; i++) {
         if (garden[i].isInsideFloor(mouseX, mouseY)) {
-            if (garden[i].gatherFlower(mouseX, mouseY) != NONE) {
+            PictureID flower = garden[i].gatherFlower(mouseX, mouseY);
+            if (flower != NONE) {
+                flowerData[flower]++;
                 return true;
             }
             return false;
@@ -149,4 +218,18 @@ void User::renderUser(SDL_Renderer* &renderer, Gallery &gallery) {
     for (int i = 0; i < (int)garden.size(); i++) {
         garden[i].renderCloudFloor(renderer, gallery);
     }
+}
+
+void User::renderPotChoosingMenu(SDL_Renderer* &renderer, Gallery &gallery) {
+    for (auto x : potData) {
+        potChoosingMenu.updateBothButton(potToName[x.first], std::to_string(x.second));
+    }
+    potChoosingMenu.renderMenu(renderer, gallery);
+}
+
+void User::renderFlowerChoosingMenu(SDL_Renderer* &renderer, Gallery &gallery) {
+    for (auto x : flowerData) {
+        flowerChoosingMenu.updateBothButton(flowerToName[x.first], std::to_string(x.second));
+    }
+    flowerChoosingMenu.renderMenu(renderer, gallery);
 }

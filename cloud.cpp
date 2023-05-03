@@ -15,11 +15,15 @@ FlowerPot::FlowerPot() {
 void FlowerPot::moveUp(int movingSpeed) {
     potPosition.y += movingSpeed;
     flowerPosition.y += movingSpeed;
+    flowerName.movingUp(movingSpeed);
+    timeTracker.movingUp(movingSpeed);
 }
 
 void FlowerPot::moveDown(int movingSpeed) {
     potPosition.y -= movingSpeed;
     flowerPosition.y -= movingSpeed;
+    flowerName.movingDown(movingSpeed);
+    timeTracker.movingDown(movingSpeed);
 }
 
 void FlowerPot::updatePotImage(PictureID newImage) {
@@ -33,7 +37,11 @@ void FlowerPot::updateFlowerImage(PictureID newImage) {
 void FlowerPot::updatePosition(SDL_Rect newPotPosition, SDL_Rect newFlowerPosition) { 
     potPosition = newPotPosition;
     flowerPosition = newFlowerPosition;
-}   
+    SDL_Rect flowerNamePosition = {flowerPosition.x, flowerPosition.y - 20, flowerPosition.w, 20};
+    SDL_Rect timeTrackerPosition = {potPosition.x, potPosition.y + potPosition.h, potPosition.w, 20};
+    flowerName = Textbox(NONE, flowerNamePosition, flowerNamePosition, BLACK_COLOR);
+    timeTracker = Textbox(NONE, timeTrackerPosition, timeTrackerPosition, BLACK_COLOR);
+}
 
 bool FlowerPot::isChoosingPot(int mouseX, int mouseY) {
     return isInside(potPosition, mouseX, mouseY) | isInside(flowerPosition, mouseX, mouseY);
@@ -51,12 +59,25 @@ bool FlowerPot::placePot(PictureID newPot) {
     return false;
 }
 
-bool FlowerPot::placeFlower(PictureID newFlower) {
+bool FlowerPot::placeFlower(PictureID newFlower, std::string _flowerName) {
     if (getFlowerImage() == NONE) {
+        flowerName.updateText(_flowerName);
         updateFlowerImage(newFlower);
+        updatePlantedTime(time(nullptr));
         return true;
     }
     return false;
+}
+
+std::string parseTime(Uint64 time) {
+    std::string ans(8, ':');
+    int tmp[3];
+    tmp[0] = time / 3600; tmp[1] = (time - tmp[0] * 3600) / 60; tmp[2] = (time % 60);
+    for (int i = 0; i < 3; i++) {
+        ans[3 * i] = tmp[i] / 10 + '0';
+        ans[3 * i + 1] = tmp[i] % 10 + '0';
+    }
+    return ans;
 }
 
 void FlowerPot::renderFlowerPot(SDL_Renderer* &renderer, Gallery &gallery) {
@@ -68,6 +89,22 @@ void FlowerPot::renderFlowerPot(SDL_Renderer* &renderer, Gallery &gallery) {
         }
     }
     if (flowerImage != NONE) {
+        int mouseX, mouseY;
+        SDL_GetMouseState(&mouseX, &mouseY);
+        if (isChoosingFlower(mouseX, mouseY)) {
+            flowerName.renderTextBox(renderer, gallery);
+            Uint64 currentTime = time(nullptr);
+            Uint64 remainingTime = 0;
+            if (currentTime < plantedTime + 5) {
+                remainingTime = plantedTime + 5 - currentTime;
+            }
+            timeTracker.updateText(parseTime(remainingTime)); 
+            timeTracker.renderTextBox(renderer, gallery);
+        }
+        if ((Uint64)time(nullptr) - getPlantedTime() < 5) {
+            SDL_RenderCopy(renderer, gallery.getFrame(SEEDLING, flowerFrame), nullptr, &flowerPosition);
+            return;
+        }
         if (flowerPosition.x >= 0 && flowerPosition.x + flowerPosition.w <= SCREEN_WIDTH && 
             flowerPosition.y >= 0 && flowerPosition.y + flowerPosition.h <= SCREEN_HEIGHT && 
             flowerPosition.w >  0 && flowerPosition.h >  0) {
@@ -86,6 +123,9 @@ bool FlowerPot::removeFlower() {
 
 PictureID FlowerPot::gatherFlower() {
     PictureID currentFlower = getFlowerImage();
+    if (time(nullptr) - getPlantedTime() < 5) {
+        return NONE;
+    }
     removeFlower();
     return currentFlower;
 }
@@ -135,9 +175,9 @@ bool CloudFloor::placePot(int mouseX, int mouseY, PictureID potImage) {
     return false;
 }
 
-bool CloudFloor::placeFlower(int mouseX, int mouseY, PictureID flowerImage) {
+bool CloudFloor::placeFlower(int mouseX, int mouseY, PictureID flowerImage, std::string flowerName) {
     for (int i = 0; i < 9; i++) {
-        if (flowerPots[i].isChoosingFlower(mouseX, mouseY) && flowerPots[i].placeFlower(flowerImage)) {
+        if (flowerPots[i].isChoosingFlower(mouseX, mouseY) && flowerPots[i].placeFlower(flowerImage, flowerName)) {
             return true;
         }
     }

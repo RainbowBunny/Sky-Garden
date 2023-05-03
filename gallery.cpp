@@ -73,6 +73,7 @@ void Gallery::loadGamePictures() {
     pictures.push_back(loadTextureFromImage("image/flower/moon_rabbit", 1, ".png", SDL_BLENDMODE_BLEND));
     pictures.push_back(loadTextureFromImage("image/flower/heart_orchid", 1, ".png", SDL_BLENDMODE_BLEND));
     pictures.push_back(loadTextureFromImage("image/flower/ghost_campanula", 1, ".png", SDL_BLENDMODE_BLEND));
+    pictures.push_back(loadTextureFromImage("image/flower/seedling", 1, ".png", SDL_BLENDMODE_BLEND));
     
     // loading pots
     pictures.push_back(loadTextureFromImage("image/pot/pot", 1, ".png", SDL_BLENDMODE_BLEND));
