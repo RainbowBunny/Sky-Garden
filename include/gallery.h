@@ -58,4 +58,6 @@ public:
     SDL_Texture* mergingTexture(SDL_Texture* texture1, SDL_Texture* texture2);
 };
 
+bool isInside(SDL_Rect rect, int pointX, int pointY);
+
 #endif

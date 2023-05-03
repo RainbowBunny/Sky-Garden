@@ -20,11 +20,19 @@ public:
     FlowerPot();
     PictureID getPotImage() { return potImage; }
     PictureID getFlowerImage() { return flowerImage; }
-    void moveUp();
-    void moveDown();
+    void moveUp(int movingSpeed);
+    void moveDown(int movingSpeed);
+
     void updatePotImage(PictureID newImage);
     void updateFlowerImage(PictureID newImage);
     void updatePosition(SDL_Rect newPotPosition, SDL_Rect newFlowerPosition);
+
+    bool isChoosingPot(int mouseX, int mouseY);
+    bool isChoosingFlower(int mouseX, int mouseY);
+
+    bool placePot(PictureID newPot);
+    bool placeFlower(PictureID newFlower);
+
     void renderFlowerPot(SDL_Renderer* &renderer, Gallery &gallery);
 };
 
@@ -32,19 +40,26 @@ class CloudFloor {
 private:
     int frame = 0;
     PictureID image;
-    SDL_Rect position;
+    SDL_Rect cloudPosition;
     std::vector <FlowerPot> flowerPots;
 public:
     CloudFloor() {}
     CloudFloor(SDL_Rect _position);
     PictureID getPotImage(int id) { return flowerPots[id].getPotImage(); }
     PictureID getFlowerImage(int id) { return flowerPots[id].getFlowerImage(); }
+
     void updateCloudImage(PictureID newImage) { image = newImage; }
     void updatePotImage(int id, PictureID newImage) { flowerPots[id].updatePotImage(newImage); }
     void updateFlowerImage(int id, PictureID newImage) { flowerPots[id].updateFlowerImage(newImage); }
     void updatePosition(int id, SDL_Rect newPotPosition, SDL_Rect newFlowerPosition) { flowerPots[id].updatePosition(newPotPosition, newFlowerPosition); }
-    void moveUp();
-    void moveDown();
+
+    void moveUp(int movingSpeed);
+    void moveDown(int movingSpeed);
+
+    bool isInsideFloor(int mouseX, int mouseY);
+    bool placePot(int mouseX, int mouseY, PictureID potImage);
+    bool placeFlower(int mouseX, int mouseY, PictureID flowerImage);
+
     void renderCloudFloor(SDL_Renderer* &renderer, Gallery &gallery);
 };
 

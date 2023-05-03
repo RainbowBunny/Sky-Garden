@@ -27,7 +27,11 @@ public:
     void createProfile();
     void readData();
     void writeData();
+
     void moveDown();
     void moveUp();
+
+    bool addPot(int x, int y, PictureID pot);
+    bool addFlower(int x, int y, PictureID flower);
     void renderUser(SDL_Renderer* &renderer, Gallery &gallery);
 };

@@ -37,6 +37,6 @@ enum GameState {
     QUITTING
 };
 
-const int MOVING_SPEED = 300;
+const int MOVING_SPEED = 210;
 
 # endif

@@ -6,6 +6,80 @@
 // Standard library
 #include <unistd.h>
 
+Uint8 castingIntToUint8(int target) { return target % (1 << 8); }
+
+void Textbox::renderTextBox(SDL_Renderer* &renderer, Gallery &gallery) {
+    if (background != NONE) {
+        SDL_RenderCopy(renderer, gallery.getFrame(background, frame), nullptr, &backgroundRect);
+        frame++;
+    }
+    
+    if ((int)textString.size() > 0) {
+        SDL_RenderCopy(renderer, gallery.loadTextureFromText(textString, textColor), nullptr, &textRect);
+    }
+}
+
+Textbox createTextboxFromFile(std::ifstream &fin) {
+    std::map <std::string, PictureID> stringToPictureID;
+
+    stringToPictureID = {{"BUTTON", BUTTON},
+                         {"PUPPY", PUPPY},
+                         {"MOON_RABBIT", MOON_RABBIT},
+                         {"HEART_ORCHID", HEART_ORCHID},
+                         {"GHOST_CAMPANULA", GHOST_CAMPANULA},
+                         {"POT", POT},
+                         {"NORMAL_FRIEND_BUTTON", NORMAL_FRIEND_BUTTON},
+                         {"SPECIAL_FRIEND_BUTTON", SPECIAL_FRIEND_BUTTON},
+                         {"NORMAL_POT_CHOOSING_BUTTON", NORMAL_POT_CHOOSING_BUTTON},
+                         {"SPECIAL_POT_CHOOSING_BUTTON", SPECIAL_POT_CHOOSING_BUTTON},
+                         {"NORMAL_SEEDLING_CHOOSING_BUTTON", NORMAL_SEEDLING_CHOOSING_BUTTON},
+                         {"SPECIAL_SEEDLING_CHOOSING_BUTTON", SPECIAL_SEEDLING_CHOOSING_BUTTON},
+                         {"TOOLBOX_BACKGROUND", TOOLBOX_BACKGROUND}};
+
+    /*
+        Input:
+        - An in file stream fin.
+        Output:
+        - Reading the input from the file, create a textbox.
+        Format:
+        string backgroundID - name of the pictures
+        backgroundRect: SDL_Rect for the textbox background
+        textRect: SDL_Rect for the position of the text in the textbox.
+        r, g, b: int for text color 
+    */
+    std::string backgroundID;
+    fin >> backgroundID;
+    PictureID id;
+    id = stringToPictureID[backgroundID];
+    
+    SDL_Rect _backgroundRect, _textRect;
+    SDL_Color _color;
+    
+    fin >> _backgroundRect.x >> _backgroundRect.y >> _backgroundRect.w >> _backgroundRect.h;
+    std::cout << _backgroundRect.x << " " << _backgroundRect.y << " " << _backgroundRect.w << " " << _backgroundRect.h << std::endl;
+    fin >> _textRect.x >> _textRect.y >> _textRect.w >> _textRect.h;
+    std::cout << _textRect.x << " " << _backgroundRect.y << " " << _backgroundRect.w << " " << _backgroundRect.h << std::endl;
+
+    int r, g, b;
+    fin >> r >> g >> b;
+    std::cout << r << " " << g << " " << b << std::endl;
+    _color.r = castingIntToUint8(r);
+    _color.g = castingIntToUint8(g);
+    _color.b = castingIntToUint8(b);
+    
+    return Textbox(id, _backgroundRect, _textRect, _color);
+}
+
+void Textbox::movingLeft(int movingSpeed) {
+    backgroundRect.x -= movingSpeed;
+    textRect.x -= movingSpeed;
+}
+
+void Textbox::movingRight(int movingSpeed) {
+    backgroundRect.x += movingSpeed;
+    textRect.x += movingSpeed;
+}
+
 Button::Button(std::string _buttonName, SDL_Rect _buttonRect, Textbox _normal, Textbox _special) {
     buttonName = _buttonName;
     buttonRect = _buttonRect;
@@ -14,16 +88,36 @@ Button::Button(std::string _buttonName, SDL_Rect _buttonRect, Textbox _normal, T
 }
 
 bool Button::isChoosing(int mouseX, int mouseY) {
+    if (!isActive) {
+        return false;
+    }
     return mouseX >= buttonRect.x && mouseX <= buttonRect.x + buttonRect.w &&
         mouseY >= buttonRect.y && mouseY <= buttonRect.y + buttonRect.h;
 }
 
 void Button::renderButton(SDL_Renderer* &renderer, Gallery& gallery) {
+    if (!isActive) {
+        return;
+    }
     if (isSpecial) {
         special.renderTextBox(renderer, gallery);
     } else {
         normal.renderTextBox(renderer, gallery);
     }
+}
+
+void Button::movingLeft(int movingSpeed) {
+    normal.movingLeft(movingSpeed);
+    special.movingLeft(movingSpeed);
+
+    buttonRect.x -= movingSpeed;
+}
+
+void Button::movingRight(int movingSpeed) {
+    normal.movingRight(movingSpeed);
+    special.movingRight(movingSpeed);
+
+    buttonRect.x += movingSpeed;
 }
 
 Menu::Menu(std::vector <std::string> _buttonName, std::vector <SDL_Rect> _buttonPosition, 
@@ -68,8 +162,6 @@ void Menu::updateBothButton(std::string buttonName, std::string text) {
     }
 }
 
-Uint8 castingIntToUint8(int target) { return target % (1 << 8); }
-
 Menu loadMenuFromFile(std::string file, SDL_Renderer* &renderer, Gallery &gallery) {
     /*
         Data format:
@@ -109,13 +201,54 @@ std::string Menu::getPressedButton(int mouseX, int mouseY) {
             return buttonList[i].getButtonName();
         }
     }
-    return "none";
+    return "NONE";
 }
 
 void Menu::updateButtonState(std::string buttonName, bool newState) {
     for (int i = 0; i < (int)buttonList.size(); i++) {
         if (buttonList[i].getButtonName() == buttonName) {
             buttonList[i].updateState(newState);
+        }
+    }
+}
+
+void Menu::movingLeft() {
+    if (startingPoint + windowLength < (int)buttonList.size()) {
+        startingPoint++;
+    } else {
+        return;
+    }
+
+    buttonList[startingPoint - 1].updateActivationState(false);
+    buttonList[startingPoint + windowLength - 1].updateActivationState(true);
+    for (int i = 0; i < (int)buttonList.size(); i++) {
+        buttonList[i].movingLeft(100);
+    }
+
+}
+
+void Menu::movingRight() {
+    if (startingPoint > 0) {
+        startingPoint--;
+    } else {
+        return;
+    }
+    buttonList[startingPoint + windowLength].updateActivationState(false);
+    buttonList[startingPoint].updateActivationState(true);
+    for (int i = 0; i < (int)buttonList.size(); i++) {
+        buttonList[i].movingRight(100);
+        std::cout << buttonList[i].getActivationState() << " ";
+    }
+    std::cout << std::endl;
+}
+
+void Menu::updateActivation(int newStartingPoint, int newWindowLength) {
+    startingPoint = newStartingPoint;
+    windowLength = newWindowLength;
+    for (int i = 0; i < (int)buttonList.size(); i++) {
+        buttonList[i].updateActivationState(false);
+        if (i >= newStartingPoint && i < newStartingPoint + newWindowLength) {
+            buttonList[i].updateActivationState(true);
         }
     }
 }
@@ -167,87 +300,28 @@ void Background::setBackgroundState(GameState state) {
     dstRect = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
 }
 
-void Background::moveDown() {
+void Background::moveDown(int movingSpeed) {
     /*
         Go to lower cloud level
     */
 
     int pictureHeight = srcRect.h, windowHeight = dstRect.h;
 
-    dstRect.y -= MOVING_SPEED;
-    dstRect.h += MOVING_SPEED;
+    dstRect.y -= movingSpeed;
+    dstRect.h += movingSpeed;
 
-    srcRect.h += MOVING_SPEED * 2000 / 600;
+    srcRect.h += movingSpeed * 2000 / 600;
 }
 
-void Background::moveUp() {
+void Background::moveUp(int movingSpeed) {
     /*
         Go to higher cloud level
     */
 
     int pictureHeight = srcRect.h, windowHeight = dstRect.h;
 
-    dstRect.y += MOVING_SPEED;
-    dstRect.h -= MOVING_SPEED;
+    dstRect.y += movingSpeed;
+    dstRect.h -= movingSpeed;
 
-    srcRect.h -= MOVING_SPEED * 2000 / 600;
-
-    std::cout << dstRect.x << " " << dstRect.y << " " << dstRect.w << " " << dstRect.h << std::endl;
-    std::cout << srcRect.x << " " << srcRect.y << " " << srcRect.w << " " << srcRect.h << std::endl;
-}
-
-void Textbox::renderTextBox(SDL_Renderer* &renderer, Gallery &gallery) {
-    if (background != NONE) {
-        SDL_RenderCopy(renderer, gallery.getFrame(background, frame), nullptr, &backgroundRect);
-        frame++;
-    }
-    
-    if ((int)textString.size() > 0) {
-        SDL_RenderCopy(renderer, gallery.loadTextureFromText(textString, textColor), nullptr, &textRect);
-    }
-}
-
-Textbox createTextboxFromFile(std::ifstream &fin) {
-    std::map <std::string, PictureID> stringToPictureID;
-
-    stringToPictureID["BUTTON"] = BUTTON;
-    stringToPictureID["NORMAL_FRIEND_BUTTON"] = NORMAL_FRIEND_BUTTON;
-    stringToPictureID["SPECIAL_FRIEND_BUTTON"] = SPECIAL_FRIEND_BUTTON;
-    stringToPictureID["NORMAL_POT_CHOOSING_BUTTON"] = NORMAL_POT_CHOOSING_BUTTON;
-    stringToPictureID["SPECIAL_POT_CHOOSING_BUTTON"] = SPECIAL_POT_CHOOSING_BUTTON;
-    stringToPictureID["NORMAL_SEEDLING_CHOOSING_BUTTON"] = NORMAL_SEEDLING_CHOOSING_BUTTON;
-    stringToPictureID["SPECIAL_SEEDLING_CHOOSING_BUTTON"] = SPECIAL_SEEDLING_CHOOSING_BUTTON;
-    stringToPictureID["TOOLBOX_BACKGROUND"] = TOOLBOX_BACKGROUND;
-    /*
-        Input:
-        - An in file stream fin.
-        Output:
-        - Reading the input from the file, create a textbox.
-        Format:
-        string backgroundID - name of the pictures
-        backgroundRect: SDL_Rect for the textbox background
-        textRect: SDL_Rect for the position of the text in the textbox.
-        r, g, b: int for text color 
-    */
-    std::string backgroundID;
-    fin >> backgroundID;
-    PictureID id;
-    id = stringToPictureID[backgroundID];
-    
-    SDL_Rect _backgroundRect, _textRect;
-    SDL_Color _color;
-    
-    fin >> _backgroundRect.x >> _backgroundRect.y >> _backgroundRect.w >> _backgroundRect.h;
-    std::cout << _backgroundRect.x << " " << _backgroundRect.y << " " << _backgroundRect.w << " " << _backgroundRect.h << std::endl;
-    fin >> _textRect.x >> _textRect.y >> _textRect.w >> _textRect.h;
-    std::cout << _textRect.x << " " << _backgroundRect.y << " " << _backgroundRect.w << " " << _backgroundRect.h << std::endl;
-
-    int r, g, b;
-    fin >> r >> g >> b;
-    std::cout << r << " " << g << " " << b << std::endl;
-    _color.r = castingIntToUint8(r);
-    _color.g = castingIntToUint8(g);
-    _color.b = castingIntToUint8(b);
-    
-    return Textbox(id, _backgroundRect, _textRect, _color);
+    srcRect.h -= movingSpeed * 2000 / 600;
 }

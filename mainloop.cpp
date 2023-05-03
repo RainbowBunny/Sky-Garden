@@ -25,11 +25,30 @@ MainLoop::MainLoop(SDL_Renderer* &renderer, Gallery &gallery) {
     toolBoxState = "Friends";
     toolBoxMenu.updateButtonState("Friends", true);
 
+    flowerChoosingMenu = loadMenuFromFile("data/flower_menu.txt", renderer, gallery);
+    flowerChoosingMenu.updateActivation(0, 6);
+
+    potChoosingMenu = loadMenuFromFile("data/pot_menu.txt", renderer, gallery);
+    potChoosingMenu.updateActivation(0, 6);
+
     background = Background(gallery);
     gameState = LOGGING_IN;
 
     currentPlayer = User("player", gallery);
     currentPlayer.readData();
+
+    currentObjectScreen = Button("Choosing Object", {900, 500, 100, 100},
+        Textbox(NONE, {900, 500, 100, 100}, {900, 500, 100, 100}, WHITE_COLOR),
+        Textbox(NONE, {900, 500, 100, 100}, {900, 500, 100, 100}, WHITE_COLOR));
+    
+    flowers = {{"PUPPY", PUPPY},
+               {"MOON_RABBIT", MOON_RABBIT},
+               {"HEART_ORCHID", HEART_ORCHID},
+               {"GHOST_CAMPANULA", GHOST_CAMPANULA},
+               {"NONE", NONE}};
+    
+    pots = {{"POT", POT},
+            {"NONE", NONE}};
 }
 
 void MainLoop::renderGame(SDL_Renderer* &renderer, Gallery &gallery, int mouseX, int mouseY) {
@@ -47,6 +66,16 @@ void MainLoop::renderGame(SDL_Renderer* &renderer, Gallery &gallery, int mouseX,
         currentPlayer.renderUser(renderer, gallery);
         toolBoxMenu.renderMenu(renderer, gallery);
         toolBoxMenuBackGround.renderMenu(renderer, gallery);
+        
+        if (toolBoxState == "Friends") {
+            
+        } else if (toolBoxState == "Pots") {
+            potChoosingMenu.renderMenu(renderer, gallery);
+        } else if (toolBoxState == "Seedlings") {
+            flowerChoosingMenu.renderMenu(renderer, gallery);
+        }
+        
+        currentObjectScreen.renderButton(renderer, gallery);
         break;
     }
 
@@ -82,29 +111,57 @@ void MainLoop::handleUserInput(SDL_Event e, SDL_Renderer* &renderer, Gallery &ga
             }
 
             case GAME_SCREEN: {
-                std::string pressedButton = toolBoxMenu.getPressedButton(e.button.x, e.button.y);
+
+                if (pots.count(choosingObject) && currentPlayer.addPot(e.button.x, e.button.y, pots[choosingObject])) {
+                    break;
+                }
+
+                if (flowers.count(choosingObject) && currentPlayer.addFlower(e.button.x, e.button.y, flowers[choosingObject])) {
+                    break;
+                }
+
+                std::string pressedButton;
+
+                pressedButton = toolBoxMenu.getPressedButton(e.button.x, e.button.y);
 
                 if (pressedButton == "Friends") {
 
                     toolBoxMenu.updateButtonState(toolBoxState, false);
                     toolBoxMenu.updateButtonState("Friends", true);
                     toolBoxState = "Friends";
+                    break;
 
                 } else if (pressedButton == "Pots") {
 
                     toolBoxMenu.updateButtonState(toolBoxState, false);
                     toolBoxMenu.updateButtonState("Pots", true);
                     toolBoxState = "Pots";
+                    break;
 
                 } else if (pressedButton == "Seedlings") {
 
                     toolBoxMenu.updateButtonState(toolBoxState, false);
                     toolBoxMenu.updateButtonState("Seedlings", true);
                     toolBoxState = "Seedlings";
+                    break;
 
-                } else {
-                    std::cout << "Watermelon?" << std::endl;
                 }
+
+                if (toolBoxState == "Friends") {
+
+                } else if (toolBoxState == "Pots") {
+                    pressedButton = potChoosingMenu.getPressedButton(e.button.x, e.button.y);
+                    choosingObject = pressedButton;
+                    currentObjectScreen.updateBothImage(pots[pressedButton]);
+                    break;
+                } else if (toolBoxState == "Seedlings") {
+                    pressedButton = flowerChoosingMenu.getPressedButton(e.button.x, e.button.y);
+                    choosingObject = pressedButton;
+                    currentObjectScreen.updateBothImage(flowers[pressedButton]);
+                    break;
+                }
+                
+                break;
             }
 
             default: {
@@ -122,14 +179,24 @@ void MainLoop::handleUserInput(SDL_Event e, SDL_Renderer* &renderer, Gallery &ga
             switch (e.key.keysym.sym) {
 
             case SDLK_UP: {
-                background.moveUp();
+                background.moveUp(210);
                 currentPlayer.moveUp();
                 break;
             }
 
             case SDLK_DOWN: {
-                background.moveDown();
+                background.moveDown(210);
                 currentPlayer.moveDown();
+                break;
+            }
+
+            case SDLK_LEFT: {
+                flowerChoosingMenu.movingRight();
+                break;
+            }
+
+            case SDLK_RIGHT: {
+                flowerChoosingMenu.movingLeft();
                 break;
             }
 

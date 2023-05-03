@@ -128,3 +128,8 @@ SDL_Texture* Gallery::mergingTexture(SDL_Texture* texture1, SDL_Texture* texture
     SDL_SetRenderTarget(renderer, nullptr);
     return target;
 }
+
+bool isInside(SDL_Rect rect, int pointX, int pointY) {
+    return rect.x <= pointX && rect.x + rect.w >= pointX &&
+           rect.y <= pointY && rect.y + rect.h >= pointY;
+}

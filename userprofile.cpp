@@ -13,20 +13,23 @@ User::User(std::string _name, Gallery gallery) {
     name = _name;
     gallery = gallery;
 
-    nameToFlower["PUPPY"] = PUPPY;
-    nameToFlower["MOON_RABBIT"] = MOON_RABBIT;
-    nameToFlower["HEART_ORCHID"] = HEART_ORCHID;
-    nameToFlower["GHOST_CAMPANULA"] = GHOST_CAMPANULA;
-    nameToFlower["NONE"] = NONE;
+    nameToFlower = {{"PUPPY", PUPPY},
+                    {"MOON_RABBIT", MOON_RABBIT},
+                    {"HEART_ORCHID", HEART_ORCHID},
+                    {"GHOST_CAMPANULA", GHOST_CAMPANULA},
+                    {"NONE", NONE}};
 
-    flowerToName[PUPPY] = "PUPPY";
-    flowerToName[MOON_RABBIT] = "MOON_RABBIT";
-    flowerToName[HEART_ORCHID] = "HEART_ORCHID";
-    flowerToName[GHOST_CAMPANULA] = "GHOST_CAMPANULA";
-    flowerToName[NONE] = "NONE";
+    flowerToName = {{PUPPY, "PUPPY"},
+                    {MOON_RABBIT, "MOON_RABBIT"},
+                    {HEART_ORCHID, "HEART_ORCHID"},
+                    {GHOST_CAMPANULA, "GHOST_CAMPANULA"},
+                    {NONE, "NONE"}};
 
-    nameToPot["POT"] = POT;
-    nameToPot["NONE"] = NONE;
+    nameToPot = {{"POT", POT},
+                 {"NONE", NONE}};
+
+    potToName = {{POT, "POT"},
+                 {NONE, "NONE"}};
 
     potToName[POT] = "POT";
     potToName[NONE] = "NONE";
@@ -54,7 +57,7 @@ void User::readData() {
     garden.resize(floor + 1);
 
     for (int i = 0; i <= floor; i++) {
-        garden[i] = CloudFloor({50, 0 - 300 * (i + 1), 900, 210});
+        garden[i] = CloudFloor({50, 0 - 210 * (i + 1), 900, 210});
         if (i == floor) {
             garden[i].updateCloudImage(NEW_CLOUD_FLOOR);
             continue;
@@ -93,18 +96,36 @@ void User::writeData() {
 
 void User::moveDown() {
     for (int i = 0; i < (int)garden.size(); i++) {
-        garden[i].moveDown();
+        garden[i].moveDown(210);
     }
 }
 
 void User::moveUp() {
     for (int i = 0; i < (int)garden.size(); i++) {
-        garden[i].moveUp();
+        garden[i].moveUp(210);
     }
 }
 
+bool User::addPot(int mouseX, int mouseY, PictureID pot) {
+    for (int i = 0; i < floor; i++) {
+        if (garden[i].isInsideFloor(mouseX, mouseY)) {
+            return garden[i].placePot(mouseX, mouseY, pot);
+        }
+    }
+    return false;
+}
+
+bool User::addFlower(int mouseX, int mouseY, PictureID flower) {
+    for (int i = 0; i < floor; i++) {
+        if (garden[i].isInsideFloor(mouseX, mouseY)) {
+            return garden[i].placeFlower(mouseX, mouseY, flower);
+        }
+    }
+    return false;
+}
+
 void User::renderUser(SDL_Renderer* &renderer, Gallery &gallery) {
-    for (int i = 0; i <= floor; i++) {
+    for (int i = 0; i < (int)garden.size(); i++) {
         garden[i].renderCloudFloor(renderer, gallery);
     }
 }

@@ -10,17 +10,25 @@
 // SDL2 library
 
 // Standard library
+#include <map>
+
 class MainLoop {
 private:
     Menu signInMenu;
     Menu toolBoxMenu, toolBoxMenuBackGround;
+
+    Menu flowerChoosingMenu, potChoosingMenu;
     Background background;
     
     User currentPlayer;
 
     std::string toolBoxState;
+    std::string choosingObject;
+    Button currentObjectScreen;
 
     GameState gameState;
+
+    std::map <std::string, PictureID> pots, flowers;    
 public:
     MainLoop(SDL_Renderer* &renderer, Gallery &gallery);
     void updateGameState(GameState state) { gameState = state; }
