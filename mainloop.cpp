@@ -118,11 +118,18 @@ void MainLoop::handleUserInput(SDL_Event e, SDL_Renderer* &renderer, Gallery &ga
 
             case GAME_SCREEN: {
 
+                if (currentPlayer.addingNewFloor(e.button.x, e.button.y)) {
+                    currentPlayer.writeData();
+                    break;
+                }
+
                 if (pots.count(choosingObject) && currentPlayer.addPot(e.button.x, e.button.y, pots[choosingObject])) {
+                    currentPlayer.writeData();
                     break;
                 }
 
                 if (flowers.count(choosingObject) && currentPlayer.addFlower(e.button.x, e.button.y, flowers[choosingObject], choosingObject)) {
+                    currentPlayer.writeData();
                     break;
                 }
 

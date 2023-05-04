@@ -78,12 +78,13 @@ void User::readData() {
 
         for (int j = 0; j < 9; j++) {
             std::string pot, flower;
-            Uint64 plantedTime;
-            fin >> pot >> flower >> plantedTime;
+            Uint64 plantedTime, growthTime;
+            fin >> pot >> flower >> plantedTime >> growthTime;
             garden[i].updateFlowerImage(j, nameToFlower[flower]);
             garden[i].updatePotImage(j, nameToPot[pot]);
             garden[i].updatePlantedTime(j, plantedTime);
             garden[i].updateFlowerName(j, flower);
+            garden[i].updateGrowthTime(j, growthTime);
         }
     }
 
@@ -92,8 +93,10 @@ void User::readData() {
     for (int i = 0; i < numberOfFlowerTypes; i++) {
         std::string flowerName;
         int count;
-        fin >> flowerName >> count;
+        Uint64 growthTime;
+        fin >> flowerName >> count >> growthTime;
         flowerData[nameToFlower[flowerName]] = count;
+        growthTimeData[nameToFlower[flowerName]] = growthTime;
     }
 
     fin >> numberOfPotTypes;
@@ -118,13 +121,14 @@ void User::writeData() {
         for (int j = 0; j < 9; j++) {
             fout << potToName[garden[i].getPotImage(j)] << " " 
                  << flowerToName[garden[i].getFlowerImage(j)] << " " 
-                 << garden[i].getPlantedTime(j) << std::endl;
+                 << garden[i].getPlantedTime(j) << " "
+                 << garden[i].getGrowthTime(j) << std::endl;
         }
     }
 
     fout << (int)flowerData.size() << std::endl;
     for (auto flower : flowerData) {
-        fout << flowerToName[flower.first] << " " << flower.second << std::endl;
+        fout << flowerToName[flower.first] << " " << flower.second << " " << growthTimeData[flower.first] <<std::endl;
     }
 
     fout << (int)potData.size() << std::endl;
@@ -181,7 +185,7 @@ bool User::addFlower(int mouseX, int mouseY, PictureID flower, std::string flowe
     }
     for (int i = 0; i < floor; i++) {
         if (garden[i].isInsideFloor(mouseX, mouseY)) {
-            bool ok = garden[i].placeFlower(mouseX, mouseY, flower, flowerName);
+            bool ok = garden[i].placeFlower(mouseX, mouseY, flower, flowerName, growthTimeData[flower]);
             if (ok) {
                 flowerData[flower]--;
             }
@@ -210,6 +214,19 @@ bool User::gatherFlower(int mouseX, int mouseY) {
             }
             return false;
         }
+    }
+    return false;
+}
+
+bool User::addingNewFloor(int mouseX, int mouseY) {
+    if (garden[floor].isInsideFloor(mouseX, mouseY)) {
+        std::cout << 1 << std::endl;
+        garden.emplace_back(CloudFloor({50, 0 - 210 * 1, 900, 210}));
+        garden[floor - 1].updateCloudImage(NORMAL_CLOUD_FLOOR);
+        garden[floor].updateCloudImage(TOP_CLOUD_FLOOR);
+        garden[floor + 1].updateCloudImage(NEW_CLOUD_FLOOR);
+        floor++;
+        return true;
     }
     return false;
 }

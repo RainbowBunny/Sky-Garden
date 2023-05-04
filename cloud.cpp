@@ -59,11 +59,12 @@ bool FlowerPot::placePot(PictureID newPot) {
     return false;
 }
 
-bool FlowerPot::placeFlower(PictureID newFlower, std::string _flowerName) {
+bool FlowerPot::placeFlower(PictureID newFlower, std::string _flowerName, Uint64 growthTime) {
     if (getFlowerImage() == NONE) {
         flowerName.updateText(_flowerName);
         updateFlowerImage(newFlower);
         updatePlantedTime(time(nullptr));
+        updateGrowthTime(growthTime);
         return true;
     }
     return false;
@@ -95,13 +96,13 @@ void FlowerPot::renderFlowerPot(SDL_Renderer* &renderer, Gallery &gallery) {
             flowerName.renderTextBox(renderer, gallery);
             Uint64 currentTime = time(nullptr);
             Uint64 remainingTime = 0;
-            if (currentTime < plantedTime + 5) {
-                remainingTime = plantedTime + 5 - currentTime;
+            if (currentTime < getPlantedTime() + getGrowthTime()) {
+                remainingTime = getPlantedTime() + getGrowthTime() - currentTime;
             }
             timeTracker.updateText(parseTime(remainingTime)); 
             timeTracker.renderTextBox(renderer, gallery);
         }
-        if ((Uint64)time(nullptr) - getPlantedTime() < 5) {
+        if ((Uint64)time(nullptr) - getPlantedTime() < getGrowthTime()) {
             SDL_RenderCopy(renderer, gallery.getFrame(SEEDLING, flowerFrame), nullptr, &flowerPosition);
             return;
         }
@@ -123,7 +124,7 @@ bool FlowerPot::removeFlower() {
 
 PictureID FlowerPot::gatherFlower() {
     PictureID currentFlower = getFlowerImage();
-    if (time(nullptr) - getPlantedTime() < 5) {
+    if (time(nullptr) - getPlantedTime() < getGrowthTime()) {
         return NONE;
     }
     removeFlower();
@@ -175,9 +176,9 @@ bool CloudFloor::placePot(int mouseX, int mouseY, PictureID potImage) {
     return false;
 }
 
-bool CloudFloor::placeFlower(int mouseX, int mouseY, PictureID flowerImage, std::string flowerName) {
+bool CloudFloor::placeFlower(int mouseX, int mouseY, PictureID flowerImage, std::string flowerName, Uint64 growthTime) {
     for (int i = 0; i < 9; i++) {
-        if (flowerPots[i].isChoosingFlower(mouseX, mouseY) && flowerPots[i].placeFlower(flowerImage, flowerName)) {
+        if (flowerPots[i].isChoosingFlower(mouseX, mouseY) && flowerPots[i].placeFlower(flowerImage, flowerName, growthTime)) {
             return true;
         }
     }
