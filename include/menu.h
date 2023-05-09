@@ -1,4 +1,6 @@
 #pragma once
+#ifndef MENU_H
+#define MENU_H
 // Custom library
 #include <constants.h>
 #include <utils.h>
@@ -107,3 +109,5 @@ public:
 };
 
 Textbox createTextboxFromFile(std::ifstream &fin);
+
+#endif

@@ -67,13 +67,20 @@ void Gallery::loadGamePictures() {
 
     pictures.push_back(loadTextureFromImage("image/menu_background", 1, ".jpg", SDL_BLENDMODE_BLEND));
     pictures.push_back(loadTextureFromImage("image/button", 1, ".png", SDL_BLENDMODE_BLEND));
+    pictures.push_back(loadTextureFromImage("image/prompt", 1, ".png", SDL_BLENDMODE_BLEND));
     
     // loading flowers
     pictures.push_back(loadTextureFromImage("image/flower/puppy", 1, ".png", SDL_BLENDMODE_BLEND));
     pictures.push_back(loadTextureFromImage("image/flower/moon_rabbit", 1, ".png", SDL_BLENDMODE_BLEND));
     pictures.push_back(loadTextureFromImage("image/flower/heart_orchid", 1, ".png", SDL_BLENDMODE_BLEND));
     pictures.push_back(loadTextureFromImage("image/flower/ghost_campanula", 1, ".png", SDL_BLENDMODE_BLEND));
+    pictures.push_back(loadTextureFromImage("image/flower/aries", 1, ".png", SDL_BLENDMODE_BLEND));
+    pictures.push_back(loadTextureFromImage("image/flower/duckling", 1, ".png", SDL_BLENDMODE_BLEND));
+    pictures.push_back(loadTextureFromImage("image/flower/leo", 1, ".png", SDL_BLENDMODE_BLEND));
+    pictures.push_back(loadTextureFromImage("image/flower/night_rabbit", 1, ".png", SDL_BLENDMODE_BLEND));
+    pictures.push_back(loadTextureFromImage("image/flower/chicken_flower", 1, ".png", SDL_BLENDMODE_BLEND));
     pictures.push_back(loadTextureFromImage("image/flower/seedling", 1, ".png", SDL_BLENDMODE_BLEND));
+
     
     // loading pots
     pictures.push_back(loadTextureFromImage("image/pot/pot", 1, ".png", SDL_BLENDMODE_BLEND));

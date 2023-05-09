@@ -39,6 +39,11 @@ MainLoop::MainLoop(SDL_Renderer* &renderer, Gallery &gallery) {
                {"MOON_RABBIT", MOON_RABBIT},
                {"HEART_ORCHID", HEART_ORCHID},
                {"GHOST_CAMPANULA", GHOST_CAMPANULA},
+               {"ARIES", ARIES},
+               {"DUCKLING", DUCKLING},
+               {"LEO", LEO},
+               {"NIGHT_RABBIT", NIGHT_RABBIT},
+               {"CHICKEN_FLOWER", CHICKEN_FLOWER},
                {"NONE", NONE}};
     
     pots = {{"POT", POT},

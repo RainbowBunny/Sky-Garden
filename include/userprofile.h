@@ -1,4 +1,6 @@
 #pragma once
+#ifndef USERPROFILE_H
+#define USERPROFILE_H
 
 // Custom library
 #include <cloud.h>
@@ -25,6 +27,8 @@ private:
 
     std::map <PictureID, int> flowerData, potData;
     std::map <PictureID, Uint64> growthTimeData;
+
+    std::vector <int> floorRequirements;
 public:
     Menu flowerChoosingMenu, potChoosingMenu;
     
@@ -52,3 +56,5 @@ public:
     void renderPotChoosingMenu(SDL_Renderer* &renderer, Gallery &gallery);
     void renderFlowerChoosingMenu(SDL_Renderer* &renderer, Gallery &gallery);
 };
+
+#endif

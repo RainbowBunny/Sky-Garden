@@ -19,12 +19,22 @@ User::User(std::string _name, SDL_Renderer* &renderer, Gallery &gallery) {
                     {"MOON_RABBIT", MOON_RABBIT},
                     {"HEART_ORCHID", HEART_ORCHID},
                     {"GHOST_CAMPANULA", GHOST_CAMPANULA},
+                    {"ARIES", ARIES},
+                    {"DUCKLING", DUCKLING},
+                    {"LEO", LEO},
+                    {"NIGHT_RABBIT", NIGHT_RABBIT},
+                    {"CHICKEN_FLOWER", CHICKEN_FLOWER},
                     {"NONE", NONE}};
 
     flowerToName = {{PUPPY, "PUPPY"},
                     {MOON_RABBIT, "MOON_RABBIT"},
                     {HEART_ORCHID, "HEART_ORCHID"},
                     {GHOST_CAMPANULA, "GHOST_CAMPANULA"},
+                    {ARIES, "ARIES"},
+                    {DUCKLING, "DUCKLING"},
+                    {LEO, "LEO"},
+                    {NIGHT_RABBIT, "NIGHT_RABBIT"},
+                    {CHICKEN_FLOWER, "CHICKEN_FLOWER"},
                     {NONE, "NONE"}};
 
     nameToPot = {{"POT", POT},
@@ -41,6 +51,8 @@ User::User(std::string _name, SDL_Renderer* &renderer, Gallery &gallery) {
 
     potChoosingMenu = loadMenuFromFile("data/pot_menu.txt", renderer, gallery);
     potChoosingMenu.updateActivation(0, 6);
+
+    floorRequirements = {0, 0, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 377, 610, 987, 1597, 2584, 1000000000};
 }
 
 void User::createProfile() {
@@ -209,7 +221,7 @@ bool User::gatherFlower(int mouseX, int mouseY) {
         if (garden[i].isInsideFloor(mouseX, mouseY)) {
             PictureID flower = garden[i].gatherFlower(mouseX, mouseY);
             if (flower != NONE) {
-                flowerData[flower]++;
+                flowerData[flower] += 2;
                 return true;
             }
             return false;
@@ -220,7 +232,21 @@ bool User::gatherFlower(int mouseX, int mouseY) {
 
 bool User::addingNewFloor(int mouseX, int mouseY) {
     if (garden[floor].isInsideFloor(mouseX, mouseY)) {
-        std::cout << 1 << std::endl;
+        if (floor == (int)floorRequirements.size()) {
+            std::cout << "What????" << std::endl;
+            exit(0);
+        }
+
+        for (auto &x : flowerData) {
+            if (x.second < floorRequirements[floor]) {
+                return false;
+            }
+        }    
+
+        for (auto &x : flowerData) {
+            x.second -= floorRequirements[floor];
+        }
+    
         garden.emplace_back(CloudFloor({50, 0 - 210 * 1, 900, 210}));
         garden[floor - 1].updateCloudImage(NORMAL_CLOUD_FLOOR);
         garden[floor].updateCloudImage(TOP_CLOUD_FLOOR);

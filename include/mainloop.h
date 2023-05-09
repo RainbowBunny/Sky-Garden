@@ -1,4 +1,6 @@
 #pragma once
+#ifndef MAINLOOP_H
+#define MAINLOOP_H
 // Custom library
 #include <constants.h>
 #include <utils.h>
@@ -36,3 +38,5 @@ public:
     void handleUserInput(SDL_Event e, SDL_Renderer* &renderer, Gallery &gallery);
     GameState getGameState() { return gameState; }
 };
+
+#endif
