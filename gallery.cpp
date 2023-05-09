@@ -68,6 +68,7 @@ void Gallery::loadGamePictures() {
     pictures.push_back(loadTextureFromImage("image/menu_background", 1, ".jpg", SDL_BLENDMODE_BLEND));
     pictures.push_back(loadTextureFromImage("image/button", 1, ".png", SDL_BLENDMODE_BLEND));
     pictures.push_back(loadTextureFromImage("image/prompt", 1, ".png", SDL_BLENDMODE_BLEND));
+    pictures.push_back(loadTextureFromImage("image/blankspace", 1, ".png", SDL_BLENDMODE_BLEND));
     
     // loading flowers
     pictures.push_back(loadTextureFromImage("image/flower/puppy", 1, ".png", SDL_BLENDMODE_BLEND));

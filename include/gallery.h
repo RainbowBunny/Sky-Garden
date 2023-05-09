@@ -18,6 +18,7 @@ enum PictureID {
     MENU_BACKGROUND = 0,
     BUTTON,
     PROMPT,
+    BLANKSPACE,
     PUPPY,
     MOON_RABBIT,
     HEART_ORCHID,

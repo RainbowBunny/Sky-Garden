@@ -15,7 +15,8 @@ void Textbox::renderTextBox(SDL_Renderer* &renderer, Gallery &gallery) {
     }
     
     if ((int)textString.size() > 0) {
-        SDL_RenderCopy(renderer, gallery.loadTextureFromText(textString, textColor), nullptr, &textRect);
+        SDL_Rect current = {textRect.x, textRect.y, std::min(textRect.w, (int)textString.size() * 25), textRect.h};
+        SDL_RenderCopy(renderer, gallery.loadTextureFromText(textString, textColor), nullptr, &current);
     }
 }
 
@@ -23,6 +24,8 @@ Textbox createTextboxFromFile(std::ifstream &fin) {
     std::map <std::string, PictureID> stringToPictureID;
 
     stringToPictureID = {{"BUTTON", BUTTON},
+                         {"BLANKSPACE", BLANKSPACE},
+                         {"PROMPT", PROMPT},
                          {"PUPPY", PUPPY},
                          {"MOON_RABBIT", MOON_RABBIT},
                          {"HEART_ORCHID", HEART_ORCHID},
@@ -43,7 +46,8 @@ Textbox createTextboxFromFile(std::ifstream &fin) {
                          {"TOOLBOX_BACKGROUND", TOOLBOX_BACKGROUND},
                          {"HAND", HAND},
                          {"SHOVEL", SHOVEL},
-                         {"QUEST_LOG", QUEST_LOG}};
+                         {"QUEST_LOG", QUEST_LOG},
+                         {"NONE", NONE}};
 
     /*
         Input:
@@ -181,6 +185,15 @@ void Menu::updateBothButton(std::string buttonName, std::string text) {
     }
 }
 
+std::string Menu::getNormalButtonText(std::string buttonName) {
+    for (int i = 0; i < (int)buttonList.size(); i++) {
+        if (buttonList[i].getButtonName() == buttonName) {
+            return buttonList[i].getTextNormal();
+        }
+    }
+    return "NONE";
+}
+
 Menu loadMenuFromFile(std::string file, SDL_Renderer* &renderer, Gallery &gallery) {
     /*
         Data format:
@@ -216,7 +229,7 @@ Menu loadMenuFromFile(std::string file, SDL_Renderer* &renderer, Gallery &galler
 
 std::string Menu::getPressedButton(int mouseX, int mouseY) {
     for (int i = 0; i < (int)buttonList.size(); i++) {
-        if (buttonList[i].isChoosing(mouseX, mouseY)) {
+        if (buttonList[i].getActivationState() == true && buttonList[i].isChoosing(mouseX, mouseY)) {
             return buttonList[i].getButtonName();
         }
     }
@@ -256,9 +269,7 @@ void Menu::movingRight() {
     buttonList[startingPoint].updateActivationState(true);
     for (int i = 0; i < (int)buttonList.size(); i++) {
         buttonList[i].movingRight(100);
-        std::cout << buttonList[i].getActivationState() << " ";
     }
-    std::cout << std::endl;
 }
 
 void Menu::updateActivation(int newStartingPoint, int newWindowLength) {

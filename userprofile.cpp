@@ -230,7 +230,7 @@ bool User::gatherFlower(int mouseX, int mouseY) {
     return false;
 }
 
-bool User::addingNewFloor(int mouseX, int mouseY) {
+int User::addingNewFloor(int mouseX, int mouseY) {
     if (garden[floor].isInsideFloor(mouseX, mouseY)) {
         if (floor == (int)floorRequirements.size()) {
             std::cout << "What????" << std::endl;
@@ -239,7 +239,7 @@ bool User::addingNewFloor(int mouseX, int mouseY) {
 
         for (auto &x : flowerData) {
             if (x.second < floorRequirements[floor]) {
-                return false;
+                return 1;
             }
         }    
 
@@ -252,9 +252,9 @@ bool User::addingNewFloor(int mouseX, int mouseY) {
         garden[floor].updateCloudImage(TOP_CLOUD_FLOOR);
         garden[floor + 1].updateCloudImage(NEW_CLOUD_FLOOR);
         floor++;
-        return true;
+        return 2;
     }
-    return false;
+    return 0;
 }
 
 void User::renderUser(SDL_Renderer* &renderer, Gallery &gallery) {
@@ -275,4 +275,36 @@ void User::renderFlowerChoosingMenu(SDL_Renderer* &renderer, Gallery &gallery) {
         flowerChoosingMenu.updateBothButton(flowerToName[x.first], std::to_string(x.second));
     }
     flowerChoosingMenu.renderMenu(renderer, gallery);
+}
+
+bool UserManager::isValidUser(std::string username, std::string password) {
+    std::cout << username << " " << password << std::endl;
+    if (!userCredential.count(username)) {
+        return false;
+    }
+    return userCredential[username] == password;
+}
+
+void UserManager::loadUserData(std::string path) {
+    std::ifstream fin(path);
+    std::cout << 1 << std::endl;
+    int numberOfUsers;
+    fin >> numberOfUsers;
+    std::string userName, userPassword;
+    getline(fin, userName);
+
+    for (int i = 0; i < numberOfUsers; i++) {
+        getline(fin, userName);
+        getline(fin, userPassword);
+        std::cout << userName << " " << userPassword << std::endl;
+        userCredential[userName] = userPassword;
+    }
+}
+
+void UserManager::updateUserData(std::string path) {
+    std::ofstream fout(path);
+    fout << (int)userCredential.size() << std::endl;
+    for (auto user : userCredential) {
+        fout << user.first << std::endl << user.second << std::endl;
+    }
 }

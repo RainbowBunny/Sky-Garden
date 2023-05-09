@@ -27,6 +27,7 @@ public:
     Textbox(PictureID _background, SDL_Rect _backgroundRect, SDL_Rect _textRect, SDL_Color _textColor) { 
         background = _background; backgroundRect = _backgroundRect; textRect = _textRect; textColor = _textColor; }
     void updateText(std::string newText) { textString = newText; }
+    std::string getText() { return textString; }
     void renderTextBox(SDL_Renderer* &renderer, Gallery &gallery);
 
     void movingLeft(int movingSpeed);
@@ -57,6 +58,7 @@ public:
     void updateBoth(std::string text) { updateNormal(text); updateSpecial(text); }
     void updateNormal(std::string text) { normal.updateText(text); }
     void updateSpecial(std::string text) { special.updateText(text); }
+    std::string getTextNormal() { return normal.getText(); }
 
     void updateBothImage(PictureID newImage) { updateNormalImage(newImage); updateSpecialImage(newImage); }
     void updateNormalImage(PictureID newImage) { normal.updateImage(newImage); }
@@ -85,6 +87,7 @@ public:
     void updateButtonSpecial(std::string buttonName, std::string text);
     void updateBothButton(std::string buttonName, std::string text);
     void updateButtonState(std::string buttonName, bool newState);
+    std::string getNormalButtonText(std::string buttonName);
     std::string getPressedButton(int mouseX, int mouseY);
 
     void updateActivation(int newStartingPoint, int newWindowLength);

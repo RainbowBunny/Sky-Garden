@@ -17,15 +17,15 @@
 class MainLoop {
 private:
     Menu signInMenu;
-    Menu toolBoxMenu, toolBoxMenuBackGround;
+    Menu signInBox, signUpBox, notificationBox;
+    UserManager userManager;
 
+    Menu toolBoxMenu, toolBoxMenuBackGround, insufficientMenu;
     Menu utilitiesMenu;
     Background background;
-    
     User currentPlayer;
 
-    std::string toolBoxState;
-    std::string choosingObject;
+    std::string toolBoxState, choosingObject, choosingBox, currentUsername, currentPassword;
     Button currentObjectScreen;
 
     GameState gameState;

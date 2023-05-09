@@ -20,16 +20,22 @@ MainLoop::MainLoop(SDL_Renderer* &renderer, Gallery &gallery) {
     signInMenu.updateBothButton("Sign In", "Sign In");
     signInMenu.updateBothButton("Sign Up", "Sign Up");
 
+    userManager.loadUserData("data/user_credential_data.txt");
+    signInBox = loadMenuFromFile("data/sign_in_box.txt", renderer, gallery);
+    signInBox.updateBothButton("__username", "Username");
+    signInBox.updateBothButton("__password", "Password");
+    signUpBox = loadMenuFromFile("data/sign_up_box.txt", renderer, gallery);
+
+    notificationBox = loadMenuFromFile("data/notification_box.txt", renderer, gallery);
+
     toolBoxMenu = loadMenuFromFile("data/toolbox_menu.txt", renderer, gallery);
     toolBoxMenuBackGround = loadMenuFromFile("data/background_of_toolbox_menu.txt", renderer, gallery);
     toolBoxState = "Friends";
     toolBoxMenu.updateButtonState("Friends", true);
+    insufficientMenu = loadMenuFromFile("data/insufficient_menu.txt", renderer, gallery);
 
     background = Background(gallery);
     gameState = LOGGING_IN;
-
-    currentPlayer = User("player", renderer, gallery);
-    currentPlayer.readData();
 
     currentObjectScreen = Button("Choosing Object", {900, 500, 100, 100},
         Textbox(NONE, {900, 500, 100, 100}, {900, 500, 100, 100}, WHITE_COLOR),
@@ -71,6 +77,17 @@ void MainLoop::renderGame(SDL_Renderer* &renderer, Gallery &gallery, int mouseX,
         break;
     }
 
+    case SIGN_IN_SCREEN: {
+        notificationBox.renderMenu(renderer, gallery);
+        signInBox.renderMenu(renderer, gallery);
+        break;
+    }
+
+    case SIGN_UP_SCREEN: {
+        signUpBox.renderMenu(renderer, gallery);
+        break;
+    }
+
     case GAME_SCREEN: {
         currentPlayer.renderUser(renderer, gallery);
         toolBoxMenu.renderMenu(renderer, gallery);
@@ -87,6 +104,12 @@ void MainLoop::renderGame(SDL_Renderer* &renderer, Gallery &gallery, int mouseX,
         currentObjectScreen.renderButton(renderer, gallery);
 
         utilitiesMenu.renderMenu(renderer, gallery);
+        break;
+    }
+
+    case INSUFFICIENT_WARNING: {
+        insufficientMenu.updateBothButton("background", "You need " + std::to_string(currentPlayer.currentRequirement()) + " flowers each types to open new floor.");
+        insufficientMenu.renderMenu(renderer, gallery);
         break;
     }
 
@@ -109,99 +132,128 @@ void MainLoop::handleUserInput(SDL_Event e, SDL_Renderer* &renderer, Gallery &ga
 
         switch (gameState) {
 
-            case LOGGING_IN: {
-                std::string pressedButton = signInMenu.getPressedButton(e.button.x, e.button.y);
-                
-                if (pressedButton == "Sign In") {
-                    if (e.button.button == SDL_BUTTON_LEFT) {
-                        updateGameState(GAME_SCREEN);
-                    }
+        case LOGGING_IN: {
+            std::string pressedButton = signInMenu.getPressedButton(e.button.x, e.button.y);
+            
+            if (pressedButton == "Sign In") {
+                if (e.button.button == SDL_BUTTON_LEFT) {
+                    updateGameState(SIGN_IN_SCREEN);
                 }
+            }
 
+            if (pressedButton == "Sign Up") {
+                if (e.button.button == SDL_BUTTON_LEFT) {
+                    
+                }
+            }
+
+            break;
+        }
+
+        case SIGN_IN_SCREEN: {
+            std::string pressedButton;
+            pressedButton = signInBox.getPressedButton(e.button.x, e.button.y);
+            if (pressedButton == "username") {
+                choosingBox = "username";
+            } else if (pressedButton == "password") {
+                choosingBox = "password";
+            }
+            break;
+        }
+
+        case SIGN_UP_SCREEN: {
+            break;
+        }
+
+        case GAME_SCREEN: {
+
+            if (currentPlayer.addingNewFloor(e.button.x, e.button.y) == 2) {
+                currentPlayer.writeData();
+                break;
+            } else if (currentPlayer.addingNewFloor(e.button.x, e.button.y) == 1) {
+                updateGameState(INSUFFICIENT_WARNING);
                 break;
             }
 
-            case GAME_SCREEN: {
-
-                if (currentPlayer.addingNewFloor(e.button.x, e.button.y)) {
-                    currentPlayer.writeData();
-                    break;
-                }
-
-                if (pots.count(choosingObject) && currentPlayer.addPot(e.button.x, e.button.y, pots[choosingObject])) {
-                    currentPlayer.writeData();
-                    break;
-                }
-
-                if (flowers.count(choosingObject) && currentPlayer.addFlower(e.button.x, e.button.y, flowers[choosingObject], choosingObject)) {
-                    currentPlayer.writeData();
-                    break;
-                }
-
-                if (choosingObject == "SHOVEL" && currentPlayer.removeFlower(e.button.x, e.button.y)) {
-                    break;
-                }
-
-                if (choosingObject == "HAND" && currentPlayer.gatherFlower(e.button.x, e.button.y)) {
-                    break;
-                }
-
-                std::string pressedButton;
-
-                pressedButton = toolBoxMenu.getPressedButton(e.button.x, e.button.y);
-
-                if (pressedButton == "Friends") {
-
-                    toolBoxMenu.updateButtonState(toolBoxState, false);
-                    toolBoxMenu.updateButtonState("Friends", true);
-                    toolBoxState = "Friends";
-                    break;
-
-                } else if (pressedButton == "Pots") {
-
-                    toolBoxMenu.updateButtonState(toolBoxState, false);
-                    toolBoxMenu.updateButtonState("Pots", true);
-                    toolBoxState = "Pots";
-                    break;
-
-                } else if (pressedButton == "Seedlings") {
-
-                    toolBoxMenu.updateButtonState(toolBoxState, false);
-                    toolBoxMenu.updateButtonState("Seedlings", true);
-                    toolBoxState = "Seedlings";
-                    break;
-
-                }
-
-                pressedButton = utilitiesMenu.getPressedButton(e.button.x, e.button.y);
-                if (pressedButton == "QUEST_LOG") {
-                    break;
-                } else if (pressedButton == "HAND" or pressedButton == "SHOVEL") {
-                    choosingObject = pressedButton;
-                    currentObjectScreen.updateBothImage(items[pressedButton]);
-                    break;
-                }
-
-                if (toolBoxState == "Friends") {
-
-                } else if (toolBoxState == "Pots") {
-                    pressedButton = currentPlayer.potChoosingMenu.getPressedButton(e.button.x, e.button.y);
-                    choosingObject = pressedButton;
-                    currentObjectScreen.updateBothImage(pots[pressedButton]);
-                    break;
-                } else if (toolBoxState == "Seedlings") {
-                    pressedButton = currentPlayer.flowerChoosingMenu.getPressedButton(e.button.x, e.button.y);
-                    choosingObject = pressedButton;
-                    currentObjectScreen.updateBothImage(flowers[pressedButton]);
-                    break;
-                }
-                
+            if (pots.count(choosingObject) && currentPlayer.addPot(e.button.x, e.button.y, pots[choosingObject])) {
+                currentPlayer.writeData();
                 break;
             }
 
-            default: {
+            if (flowers.count(choosingObject) && currentPlayer.addFlower(e.button.x, e.button.y, flowers[choosingObject], choosingObject)) {
+                currentPlayer.writeData();
                 break;
-            } 
+            }
+
+            if (choosingObject == "SHOVEL" && currentPlayer.removeFlower(e.button.x, e.button.y)) {
+                break;
+            }
+
+            if (choosingObject == "HAND" && currentPlayer.gatherFlower(e.button.x, e.button.y)) {
+                break;
+            }
+
+            std::string pressedButton;
+
+            pressedButton = toolBoxMenu.getPressedButton(e.button.x, e.button.y);
+
+            if (pressedButton == "Friends") {
+
+                toolBoxMenu.updateButtonState(toolBoxState, false);
+                toolBoxMenu.updateButtonState("Friends", true);
+                toolBoxState = "Friends";
+                break;
+
+            } else if (pressedButton == "Pots") {
+
+                toolBoxMenu.updateButtonState(toolBoxState, false);
+                toolBoxMenu.updateButtonState("Pots", true);
+                toolBoxState = "Pots";
+                break;
+
+            } else if (pressedButton == "Seedlings") {
+
+                toolBoxMenu.updateButtonState(toolBoxState, false);
+                toolBoxMenu.updateButtonState("Seedlings", true);
+                toolBoxState = "Seedlings";
+                break;
+
+            }
+
+            pressedButton = utilitiesMenu.getPressedButton(e.button.x, e.button.y);
+            if (pressedButton == "QUEST_LOG") {
+                break;
+            } else if (pressedButton == "HAND" or pressedButton == "SHOVEL") {
+                choosingObject = pressedButton;
+                currentObjectScreen.updateBothImage(items[pressedButton]);
+                break;
+            }
+
+            if (toolBoxState == "Friends") {
+
+            } else if (toolBoxState == "Pots") {
+                pressedButton = currentPlayer.potChoosingMenu.getPressedButton(e.button.x, e.button.y);
+                choosingObject = pressedButton;
+                currentObjectScreen.updateBothImage(pots[pressedButton]);
+                break;
+            } else if (toolBoxState == "Seedlings") {
+                pressedButton = currentPlayer.flowerChoosingMenu.getPressedButton(e.button.x, e.button.y);
+                choosingObject = pressedButton;
+                currentObjectScreen.updateBothImage(flowers[pressedButton]);
+                break;
+            }
+            
+            break;
+        }
+
+        case INSUFFICIENT_WARNING: {
+            updateGameState(GAME_SCREEN);
+            break;
+        }
+
+        default: {
+            break;
+        } 
 
         }
 
@@ -210,6 +262,50 @@ void MainLoop::handleUserInput(SDL_Event e, SDL_Renderer* &renderer, Gallery &ga
     case SDL_KEYDOWN: {
 
         switch(gameState) {
+        case SIGN_IN_SCREEN: {
+            if (choosingBox == "username") {
+                int pressedKey = e.key.keysym.sym;
+                if (pressedKey >= SDLK_a and pressedKey <= SDLK_z) {
+                    currentUsername.push_back(char('a' + pressedKey - SDLK_a));
+                } else if (pressedKey >= SDLK_0 and pressedKey <= SDLK_9) {
+                    currentUsername.push_back(char('0' + pressedKey - SDLK_0));
+                } else if (pressedKey == SDLK_BACKSPACE) {
+                    if (!currentUsername.empty()) {
+                        currentUsername.pop_back();
+                    }
+                }
+            } else if (choosingBox == "password") {
+                int pressedKey = e.key.keysym.sym;
+                if (pressedKey >= SDLK_a and pressedKey <= SDLK_z) {
+                    currentPassword.push_back(char('a' + pressedKey - SDLK_a));
+                } else if (pressedKey >= SDLK_0 and pressedKey <= SDLK_9) {
+                    currentPassword.push_back(char('0' + pressedKey - SDLK_0));
+                } else if (pressedKey == SDLK_BACKSPACE) {
+                    if (!currentPassword.empty()) {
+                        currentPassword.pop_back();
+                    }
+                }
+            }
+            signInBox.updateBothButton("username", currentUsername);
+            signInBox.updateBothButton("password", std::string(currentPassword.size(), '*'));
+            if (e.key.keysym.sym == SDLK_RETURN) {
+                if (userManager.isValidUser(currentUsername, currentPassword)) {
+                    currentPlayer = User(currentUsername, renderer, gallery);
+                    currentPlayer.readData();
+                    updateGameState(GAME_SCREEN);
+                } else {
+                    updateGameState(LOGGING_IN);
+                }
+                currentUsername.clear();
+                currentPassword.clear();
+            } else if (e.key.keysym.sym == SDLK_ESCAPE) {
+                currentUsername.clear();
+                currentPassword.clear();
+                updateGameState(LOGGING_IN);
+            }
+            break;
+        }
+
         case GAME_SCREEN: {
             switch (e.key.keysym.sym) {
 

@@ -50,11 +50,22 @@ public:
     bool removeFlower(int mouseX, int mouseY);
     bool gatherFlower(int mouseX, int mouseY);
 
-    bool addingNewFloor(int mouseX, int mouseY);
+    int currentRequirement() { return floorRequirements[floor]; }
+    int addingNewFloor(int mouseX, int mouseY);
 
     void renderUser(SDL_Renderer* &renderer, Gallery &gallery);
     void renderPotChoosingMenu(SDL_Renderer* &renderer, Gallery &gallery);
     void renderFlowerChoosingMenu(SDL_Renderer* &renderer, Gallery &gallery);
+};
+
+class UserManager {
+private:
+    std::map <std::string, std::string> userCredential;
+public:
+    UserManager() {}
+    bool isValidUser(std::string username, std::string password);
+    void loadUserData(std::string path);
+    void updateUserData(std::string path);
 };
 
 #endif
