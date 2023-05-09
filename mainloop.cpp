@@ -33,6 +33,8 @@ MainLoop::MainLoop(SDL_Renderer* &renderer, Gallery &gallery) {
     toolBoxState = "Friends";
     toolBoxMenu.updateButtonState("Friends", true);
     insufficientMenu = loadMenuFromFile("data/insufficient_menu.txt", renderer, gallery);
+    pauseMenu = loadMenuFromFile("data/pause_menu.txt", renderer, gallery);
+    pauseMenu.updateBothButton("Log Out", "Log Out");
 
     background = Background(gallery);
     gameState = LOGGING_IN;
@@ -110,6 +112,11 @@ void MainLoop::renderGame(SDL_Renderer* &renderer, Gallery &gallery, int mouseX,
     case INSUFFICIENT_WARNING: {
         insufficientMenu.updateBothButton("background", "You need " + std::to_string(currentPlayer.currentRequirement()) + " flowers each types to open new floor.");
         insufficientMenu.renderMenu(renderer, gallery);
+        break;
+    }
+
+    case PAUSE_MENU: {
+        pauseMenu.renderMenu(renderer, gallery);
         break;
     }
 
@@ -251,6 +258,14 @@ void MainLoop::handleUserInput(SDL_Event e, SDL_Renderer* &renderer, Gallery &ga
             break;
         }
 
+        case PAUSE_MENU: {
+            std::string pressedButton = pauseMenu.getPressedButton(e.button.x, e.button.y);
+            if (pressedButton == "Log Out") {
+                updateGameState(LOGGING_IN);
+            }
+            break;
+        }
+
         default: {
             break;
         } 
@@ -329,11 +344,34 @@ void MainLoop::handleUserInput(SDL_Event e, SDL_Renderer* &renderer, Gallery &ga
                 break;
             }
 
+            case SDLK_SPACE: {
+                updateGameState(PAUSE_MENU);
+                break;
+            }
+
             default: {
                 break;
             }
 
             }
+        }
+
+        case PAUSE_MENU: {
+            switch (e.key.keysym.sym) {
+            
+            case SDLK_ESCAPE: {
+                updateGameState(GAME_SCREEN);
+                break;
+            }
+
+            default: {
+                break;
+            }
+            }
+        }
+
+        default: {
+            break;
         }
 
         }

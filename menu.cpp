@@ -69,13 +69,10 @@ Textbox createTextboxFromFile(std::ifstream &fin) {
     SDL_Color _color;
     
     fin >> _backgroundRect.x >> _backgroundRect.y >> _backgroundRect.w >> _backgroundRect.h;
-    std::cout << _backgroundRect.x << " " << _backgroundRect.y << " " << _backgroundRect.w << " " << _backgroundRect.h << std::endl;
     fin >> _textRect.x >> _textRect.y >> _textRect.w >> _textRect.h;
-    std::cout << _textRect.x << " " << _backgroundRect.y << " " << _backgroundRect.w << " " << _backgroundRect.h << std::endl;
 
     int r, g, b;
     fin >> r >> g >> b;
-    std::cout << r << " " << g << " " << b << std::endl;
     _color.r = castingIntToUint8(r);
     _color.g = castingIntToUint8(g);
     _color.b = castingIntToUint8(b);
@@ -219,9 +216,7 @@ Menu loadMenuFromFile(std::string file, SDL_Renderer* &renderer, Gallery &galler
     for (int i = 0; i < n; i++) {
         getline(fin, buttonName[i]); // taking the '\n' character
         getline(fin, buttonName[i]);
-        std::cout << buttonName[i] << std::endl;
         fin >> buttonPosition[i].x >> buttonPosition[i].y >> buttonPosition[i].w >> buttonPosition[i].h;
-        std::cout << buttonPosition[i].x << " " << buttonPosition[i].y << " " << buttonPosition[i].w << " " << buttonPosition[i].h << std::endl;
         normal[i] = createTextboxFromFile(fin), special[i] = createTextboxFromFile(fin);
     }
     return Menu(buttonName, buttonPosition, normal, special);

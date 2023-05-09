@@ -21,7 +21,7 @@ private:
     UserManager userManager;
 
     Menu toolBoxMenu, toolBoxMenuBackGround, insufficientMenu;
-    Menu utilitiesMenu;
+    Menu utilitiesMenu, pauseMenu;
     Background background;
     User currentPlayer;
 
