@@ -66,6 +66,8 @@ public:
     bool isValidUser(std::string username, std::string password);
     void loadUserData(std::string path);
     void updateUserData(std::string path);
+    bool canCreateUser(std::string name);
+    void addUser(std::string username, std::string password);
 };
 
 #endif

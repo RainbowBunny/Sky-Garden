@@ -25,6 +25,8 @@ MainLoop::MainLoop(SDL_Renderer* &renderer, Gallery &gallery) {
     signInBox.updateBothButton("__username", "Username");
     signInBox.updateBothButton("__password", "Password");
     signUpBox = loadMenuFromFile("data/sign_up_box.txt", renderer, gallery);
+    signUpBox.updateBothButton("__username", "Username");
+    signUpBox.updateBothButton("__password", "Password");
 
     notificationBox = loadMenuFromFile("data/notification_box.txt", renderer, gallery);
 
@@ -64,6 +66,21 @@ MainLoop::MainLoop(SDL_Renderer* &renderer, Gallery &gallery) {
     utilitiesMenu = loadMenuFromFile("data/gardening_tool.txt", renderer, gallery);
 }
 
+void MainLoop::createNewProfile(std::string name) {
+    std::ofstream fout("data/" + name + "_data.txt");
+    fout << 1000 << std::endl;
+    fout << 2 << std::endl;
+    fout << "POT PUPPY 0 30\nPOT MOON_RABBIT 0 60\nPOT GHOST_CAMPANULA 0 300\nPOT ARIES 0 600\n";
+    for (int i = 0; i < 14; i++) {
+        fout << "NONE NONE 0 0\n";
+    }
+    fout << 9 << std::endl;
+    fout << "PUPPY 5 30\nMOON_RABBIT 5 60\nHEART_ORCHID 5 120\nGHOST_CAMPANULA 5 300\nARIES 1 600\nDUCKLING 1 1800\nLEO 1 3600\nNIGHT_RABBIT 1 7200\nCHICKEN_FLOWER 1 18000\n";
+    fout << 1 << std::endl;
+    fout << "POT 1000\n";
+    fout.close();
+}
+
 void MainLoop::renderGame(SDL_Renderer* &renderer, Gallery &gallery, int mouseX, int mouseY) {
     // std::cout << "Mainloop rendering..." << std::endl;
     if (gameState == GAME_SCREEN && currentPlayer.getCurrentFloor() > 0) {
@@ -86,6 +103,7 @@ void MainLoop::renderGame(SDL_Renderer* &renderer, Gallery &gallery, int mouseX,
     }
 
     case SIGN_UP_SCREEN: {
+        notificationBox.renderMenu(renderer, gallery);
         signUpBox.renderMenu(renderer, gallery);
         break;
     }
@@ -150,7 +168,7 @@ void MainLoop::handleUserInput(SDL_Event e, SDL_Renderer* &renderer, Gallery &ga
 
             if (pressedButton == "Sign Up") {
                 if (e.button.button == SDL_BUTTON_LEFT) {
-                    
+                    updateGameState(SIGN_UP_SCREEN);
                 }
             }
 
@@ -169,6 +187,13 @@ void MainLoop::handleUserInput(SDL_Event e, SDL_Renderer* &renderer, Gallery &ga
         }
 
         case SIGN_UP_SCREEN: {
+            std::string pressedButton;
+            pressedButton = signInBox.getPressedButton(e.button.x, e.button.y);
+            if (pressedButton == "username") {
+                choosingBox = "username";
+            } else if (pressedButton == "password") {
+                choosingBox = "password";
+            }
             break;
         }
 
@@ -305,6 +330,53 @@ void MainLoop::handleUserInput(SDL_Event e, SDL_Renderer* &renderer, Gallery &ga
             signInBox.updateBothButton("password", std::string(currentPassword.size(), '*'));
             if (e.key.keysym.sym == SDLK_RETURN) {
                 if (userManager.isValidUser(currentUsername, currentPassword)) {
+                    currentPlayer = User(currentUsername, renderer, gallery);
+                    currentPlayer.readData();
+                    updateGameState(GAME_SCREEN);
+                } else {
+                    updateGameState(LOGGING_IN);
+                }
+                currentUsername.clear();
+                currentPassword.clear();
+            } else if (e.key.keysym.sym == SDLK_ESCAPE) {
+                currentUsername.clear();
+                currentPassword.clear();
+                updateGameState(LOGGING_IN);
+            }
+            break;
+        }
+
+        case SIGN_UP_SCREEN: {
+            if (choosingBox == "username") {
+                int pressedKey = e.key.keysym.sym;
+                if (pressedKey >= SDLK_a and pressedKey <= SDLK_z) {
+                    currentUsername.push_back(char('a' + pressedKey - SDLK_a));
+                } else if (pressedKey >= SDLK_0 and pressedKey <= SDLK_9) {
+                    currentUsername.push_back(char('0' + pressedKey - SDLK_0));
+                } else if (pressedKey == SDLK_BACKSPACE) {
+                    if (!currentUsername.empty()) {
+                        currentUsername.pop_back();
+                    }
+                }
+            } else if (choosingBox == "password") {
+                int pressedKey = e.key.keysym.sym;
+                if (pressedKey >= SDLK_a and pressedKey <= SDLK_z) {
+                    currentPassword.push_back(char('a' + pressedKey - SDLK_a));
+                } else if (pressedKey >= SDLK_0 and pressedKey <= SDLK_9) {
+                    currentPassword.push_back(char('0' + pressedKey - SDLK_0));
+                } else if (pressedKey == SDLK_BACKSPACE) {
+                    if (!currentPassword.empty()) {
+                        currentPassword.pop_back();
+                    }
+                }
+            }
+            signUpBox.updateBothButton("username", currentUsername);
+            signUpBox.updateBothButton("password", std::string(currentPassword.size(), '*'));
+            if (e.key.keysym.sym == SDLK_RETURN) {
+                std::cout << userManager.canCreateUser(currentUsername) << std::endl;
+                if (userManager.canCreateUser(currentUsername) and currentUsername.size() >= 4 and currentPassword.size() >= 4) {
+                    createNewProfile(currentUsername);
+                    userManager.addUser(currentUsername, currentPassword);
                     currentPlayer = User(currentUsername, renderer, gallery);
                     currentPlayer.readData();
                     updateGameState(GAME_SCREEN);

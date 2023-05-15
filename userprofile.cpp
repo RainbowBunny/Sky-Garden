@@ -287,7 +287,6 @@ bool UserManager::isValidUser(std::string username, std::string password) {
 
 void UserManager::loadUserData(std::string path) {
     std::ifstream fin(path);
-    std::cout << 1 << std::endl;
     int numberOfUsers;
     fin >> numberOfUsers;
     std::string userName, userPassword;
@@ -307,4 +306,17 @@ void UserManager::updateUserData(std::string path) {
     for (auto user : userCredential) {
         fout << user.first << std::endl << user.second << std::endl;
     }
+}
+
+void UserManager::addUser(std::string username, std::string password) {
+    if(userCredential.count(username)) {
+        std::cout << "Bugggggg" << std::endl;
+        return;
+    }
+    userCredential[username] = password;
+    updateUserData("data/user_credential_data.txt");
+}
+
+bool UserManager::canCreateUser(std::string name) {
+    return !userCredential.count(name);
 }

@@ -36,6 +36,7 @@ public:
     void updateGameState(GameState state) { gameState = state; }
     void renderGame(SDL_Renderer* &renderer, Gallery &gallery, int mouseX, int mouseY);
     void handleUserInput(SDL_Event e, SDL_Renderer* &renderer, Gallery &gallery);
+    void createNewProfile(std::string name);
     GameState getGameState() { return gameState; }
 };
 
