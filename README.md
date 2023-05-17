@@ -20,7 +20,8 @@ Please follow these step to install the game:
 This repo has all the required dll file and the SDL2 library so you do not need to install the library again. The game has been tested on Window and Linux but not Mac so there may be some problem when running on Mac. You can use your own config of SDL2 library.
 ## About the game
 This game is created in C++ with the assistance of SDL2 library. Detail about this library can be found here: https://wiki.libsdl.org/SDL2/FrontPage. 
-In the first screen of the game, there are two buttons: sign in and sign up, please note that the sign up button does not do anything for now. To log in, click the sign in button, there are only 5 sample players, there credential can be find in the ```data/user_credential_data.txt``` file.
+Now you can create a new user, note that the username and password need to have length >= 4.
+To log in, click the sign in button, please do not stole other people data in ```data/user_credential_data.txt``` file.
 After logging in, use your up and down arrow key to move between cloud floors, use your left and right arrow key to move in the list of flowers.
 If you do not know the function of something on the screen, try to click it :>. The only notable thing is that please consider carefully when you use the shovel with the flower, all others function is relatively safe and may not result in any incident (hopefully).
 There are some hidden function that can be trigger by the escape key on your keyboard.
@@ -32,7 +33,6 @@ A documentation of the detail of the code can be found here:
 
 The base game has been implemented but it is still very simple. Some function may be added in the future:
 
-- Sign Up button.
 - More background music in the game.
 - A quest menu/trading menu to accelerate the progress of the player.
 - Visiting other player garden.
