@@ -26,6 +26,14 @@ After logging in, use your up and down arrow key to move between cloud floors, u
 If you do not know the function of something on the screen, try to click it :>. The only notable thing is that please consider carefully when you use the shovel with the flower, all others function is relatively safe and may not result in any incident (hopefully).
 There are some hidden function that can be trigger by the escape key on your keyboard.
 In the log in screen, special characters and uppercase letter has not yet been implemented.
+## How to play
+- Create an account with the ```sign up button``` or ```log in``` if you already have an account, note that the user name and passwords' length must be ```greater than or equal 4```.
+- To escape from the boxes, try to use ```esc key```.
+- To move between cloudfloor, use ```up arrow``` and ```down arrow```.
+- Gathering using the ```gatherer button```.
+- To remove a flower use the ```shovel```, please note that the removed flower ```will not be returned```.
+- There are a ```pot menu``` and a ```flower menu``` to help you plant flower.
+- Use ```left and right arrow``` to navigate in the flower menu and pot menu.
 ## Documentation
 A documentation of the detail of the code can be found here:
 
