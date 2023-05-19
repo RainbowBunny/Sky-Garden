@@ -29,6 +29,14 @@ In the log in screen, special characters and uppercase letter has not yet been i
 ## Documentation
 A documentation of the detail of the code can be found here:
 
+## Game Screenshots
+
+Start menu screenshot: 
+![Alt text](https://github.com/RainbowBunny/Sky-Garden/blob/main/StartMenu.png)
+
+In game screenshot: 
+![Alt text](https://github.com/RainbowBunny/Sky-Garden/blob/main/InGame.png)
+
 ## Future Work
 
 The base game has been implemented but it is still very simple. Some function may be added in the future:
